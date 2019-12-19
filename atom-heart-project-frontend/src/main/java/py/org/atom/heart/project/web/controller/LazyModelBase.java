@@ -20,7 +20,7 @@ public class LazyModelBase<T> extends LazyDataModel<T>{
 	protected String count;
 	protected List<FilterField> filters;
 	protected LinkedHashMap<String, Boolean> sort;
-	
+	protected List<T> data;
 	public LazyModelBase(ServiceBase<T> service, String query, List<FilterField> filters, LinkedHashMap<String, Boolean> sort) {
 		this.service = service;
 		this.filters = filters;
@@ -28,6 +28,19 @@ public class LazyModelBase<T> extends LazyDataModel<T>{
 		this.query = query;
 	}
 	
+    public T getRowData(String rowKey) {
+        for (T o : data) {
+        	Object idVal = this.service.getIdValue(o);
+            if (rowKey.equals(idVal.toString())) 
+                return o;
+        }
+        return null;
+    }	
+	
+    public Object getRowKey(T o) {
+        return this.service.getIdValue(o);
+    }    
+    
 	public List<T> load(int first, int pageSize, Map<String, SortMeta> sortMeta, Map<String, FilterMeta> filterMeta){
 		Map<String,Map<String,Object>> cq = this.getFullQuery(true);
 		Map<String,Map<String,Object>> rq = this.getFullQuery(false);
@@ -40,13 +53,16 @@ public class LazyModelBase<T> extends LazyDataModel<T>{
 		for(String k: rq.keySet()) fullQuery = k;
 		if(count.intValue() > pageSize) {
 			try {
-				return this.service.getList(fullQuery, rq.get(fullQuery), first, first + pageSize);
+				this.data = this.service.getList(fullQuery, rq.get(fullQuery), first, first + pageSize);
+				return this.data;
 			}catch(IndexOutOfBoundsException ex) {
-				return this.service.getList(fullQuery, rq.get(fullQuery), first, first + (count.intValue() % pageSize));
+				this.data = this.service.getList(fullQuery, rq.get(fullQuery), first, first + (count.intValue() % pageSize));
+				return this.data;
 			}
 		}else {
 			first = 0;
-			return this.service.getList(fullQuery, rq.get(fullQuery), first, count.intValue());
+			this.data = this.service.getList(fullQuery, rq.get(fullQuery), first, count.intValue());
+			return this.data;
 		}
 	}
 	

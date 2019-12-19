@@ -1,9 +1,12 @@
 package py.org.atom.heart.project.service;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Id;
 import javax.persistence.Query;
 
 import py.org.atom.heart.project.BackendBase;
@@ -38,6 +41,31 @@ public class ServiceBase<T> extends BackendBase {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public T getById(Class c, Object id) {
 		return (T) this.em.find(c, id);
+	}
+	@SuppressWarnings("rawtypes")
+	public Object getIdValue(T in) {
+		if(in == null) return null;
+		try {
+			Class c = in.getClass();
+			Field[] fields = c.getDeclaredFields();
+			if(fields == null || fields.length <= 0 ) return null;
+			for(Field field : fields) {
+				if(field.getAnnotationsByType(Id.class).length > 0) {
+					String attr = field.getName();
+					attr = "get" + attr.toLowerCase();
+					Method[] methods = c.getMethods();
+					if(methods == null || methods.length <= 0) return null;
+					for(Method m : methods) {
+						if(attr.trim().equals(m.getName().toLowerCase())) {
+							return m.invoke(in, null);
+						}
+					}
+				}
+			}
+		}catch(Exception ex) {
+			return null;
+		}
+		return null;
 	}
 	
 	public T update(T o) throws ServiceException{
