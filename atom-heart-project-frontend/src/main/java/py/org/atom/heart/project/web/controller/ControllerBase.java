@@ -10,12 +10,16 @@ import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
 
+import javax.enterprise.context.Conversation;
+import javax.inject.Inject;
+
 import org.primefaces.model.LazyDataModel;
 
 import py.org.atom.heart.project.FrontendBase;
 
-public class ControllerBase<T> extends FrontendBase{
-
+public abstract class ControllerBase<T> extends FrontendBase{
+	@Inject
+    	protected Conversation conversation;
 	public static final char FORM = 'f';
 	public static final char LIST = 'l';
 	public static final int DATA_TABLE_DEFAULT_PAGE_SIZE=15;
@@ -44,6 +48,8 @@ public class ControllerBase<T> extends FrontendBase{
 	public void updateAction() {
 		// TODO: do update
 	}
+	protected abstract T newInstance();
+	
 	public void addSortAction(String key) {
 		if(key == null || key.trim().length() <= 0) return;
 		if(this.sort.containsKey(key)) {
@@ -59,8 +65,9 @@ public class ControllerBase<T> extends FrontendBase{
 		if(this.sort == null || this.sort.size() <= 0) return;
 		this.searchAction();
 	}	
-	protected void start() {
-		
+	public void start() {
+		if(this.conversation.isTransient()) this.conversation.begin();
+		if(this.conversation != null) this.conversation.setTimeout(10800000);		
 	}
 	protected void error(String msg) {
 		this.showMsg(FacesMessage.SEVERITY_ERROR, msg);
