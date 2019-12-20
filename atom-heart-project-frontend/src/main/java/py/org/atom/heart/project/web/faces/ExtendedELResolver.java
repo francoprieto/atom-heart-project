@@ -1,4 +1,4 @@
-package py.org.atom.hear.project.web.faces;
+package py.org.atom.heart.project.web.faces;
 
 import java.util.Collection;
 import java.util.Map;

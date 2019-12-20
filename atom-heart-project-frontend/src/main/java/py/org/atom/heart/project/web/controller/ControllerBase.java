@@ -19,7 +19,7 @@ import py.org.atom.heart.project.FrontendBase;
 
 public abstract class ControllerBase<T> extends FrontendBase{
 	@Inject
-    	protected Conversation conversation;
+    protected Conversation conversation;
 	public static final char FORM = 'f';
 	public static final char LIST = 'l';
 	public static final int DATA_TABLE_DEFAULT_PAGE_SIZE=15;
