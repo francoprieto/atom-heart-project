@@ -17,7 +17,7 @@ import org.primefaces.model.LazyDataModel;
 
 import py.org.atom.heart.project.FrontendBase;
 
-public abstract class ControllerBase<T> extends FrontendBase{
+public abstract class ControllerBase<T,V> extends FrontendBase{
 	@Inject
     protected Conversation conversation;
 	public static final char FORM = 'f';
@@ -26,10 +26,16 @@ public abstract class ControllerBase<T> extends FrontendBase{
 	private char screen = LIST;
 	private T instance;
 	private List<FilterField> filters = new ArrayList<FilterField>();
+	private List<ListField> listFields = new ArrayList<ListField>();
+	private List<FormField> formFields = new ArrayList<FormField>();
 	private LinkedHashMap<String, Boolean> sort = new LinkedHashMap<String,Boolean>(); 
 	private String user;
 	private LazyDataModel<T> dataList = null;
 	private int pageSize=DATA_TABLE_DEFAULT_PAGE_SIZE;
+
+	protected abstract T newInstance();
+	protected V service;
+
 	public void searchAction() {
 		// TODO: do search
 	}
@@ -47,8 +53,7 @@ public abstract class ControllerBase<T> extends FrontendBase{
 	}
 	public void updateAction() {
 		// TODO: do update
-	}
-	protected abstract T newInstance();
+	}	
 	
 	public void addSortAction(String key) {
 		if(key == null || key.trim().length() <= 0) return;
