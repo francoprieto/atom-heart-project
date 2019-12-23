@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 import org.primefaces.model.LazyDataModel;
 
 import py.org.atom.heart.project.FrontendBase;
+import py.org.atom.heart.project.service.ServiceBase;
 
 public abstract class ControllerBase<T,V> extends FrontendBase{
 	@Inject
@@ -28,33 +30,29 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	private List<FilterField> filters = new ArrayList<FilterField>();
 	private List<ListField> listFields = new ArrayList<ListField>();
 	private List<FormField> formFields = new ArrayList<FormField>();
+	private Map<String,List<ViewField>> viewFields = new LinkedHashMap<String,List<ViewField>>();
 	private LinkedHashMap<String, Boolean> sort = new LinkedHashMap<String,Boolean>(); 
-	private String user;
+	protected String user;
+	protected String baseQuery;
 	private LazyDataModel<T> dataList = null;
 	private int pageSize=DATA_TABLE_DEFAULT_PAGE_SIZE;
-
-	protected abstract T newInstance();
 	protected V service;
-
-	public void searchAction() {
-		// TODO: do search
+	protected abstract T newInstance();
+	public abstract void init();
+	public abstract void searchAction();
+	public abstract void clearAction();
+	public abstract void removeAction();
+	public abstract void editAction();
+	public abstract void newAction();
+	public abstract void updateAction();
+	protected void search() {
+		ServiceBase sb = (ServiceBase) this.service;
+		this.dataList = new LazyModelBase<T>(sb, this.baseQuery, filters, sort);
 	}
-	public void clearAction() {
-		// TODO: do clear
+	protected void clear() {
+		this.dataList = null;
+		init();
 	}
-	public void removeAction() {
-		// TODO: do remove
-	}
-	public void editAction() {
-		// TODO: do edit
-	}
-	public void newAction() {
-		// TODO: do new
-	}
-	public void updateAction() {
-		// TODO: do update
-	}	
-	
 	public void addSortAction(String key) {
 		if(key == null || key.trim().length() <= 0) return;
 		if(this.sort.containsKey(key)) {
@@ -118,12 +116,44 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 		if(o == null) return;
 		this.filters.add(o);
 	}
-
 	public List<FilterField> getFilters() {
 		return filters;
 	}
 	public void setFilters(List<FilterField> filters) {
 		this.filters = filters;
+	}
+	public List<ListField> getListFields() {
+		return listFields;
+	}
+	public void setListFields(List<ListField> listFields) {
+		this.listFields = listFields;
+	}
+	public void addListField(ListField o) {
+		if(o == null) return;
+		this.listFields.add(o);
+	}
+	public List<FormField> getFormFields() {
+		return formFields;
+	}
+	public void setFormFields(List<FormField> formFields) {
+		this.formFields = formFields;
+	}
+	public void addFormField(FormField o) {
+		if(o == null) return;
+		this.formFields.add(o);
+	}
+	public Map<String, List<ViewField>> getViewFields() {
+		return viewFields;
+	}
+	public void setViewFields(Map<String, List<ViewField>> viewFields) {
+		this.viewFields = viewFields;
+	}
+	public void addViewField(String tab, ViewField o) {
+		if(o == null) return;
+		List<ViewField> vfs = this.viewFields.get(tab);
+		if(vfs == null) vfs = new ArrayList<ViewField>();
+		vfs.add(o);
+		this.viewFields.put(tab, vfs);
 	}
 	public LinkedHashMap<String, Boolean> getSort() {
 		return sort;
