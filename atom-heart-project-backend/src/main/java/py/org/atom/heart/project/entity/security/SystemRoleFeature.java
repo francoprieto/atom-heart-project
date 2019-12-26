@@ -9,32 +9,32 @@ import javax.persistence.MappedSuperclass;
 import py.org.atom.heart.project.entity.InsertBase;
 
 @MappedSuperclass
-public class SystemRoleFeature extends InsertBase{
+public class SystemRoleFeature<T,V> extends InsertBase{
 	@Id
 	@GeneratedValue
 	private long id;
 	@ManyToOne
     @JoinColumn(name = "role_id")
-	private SystemRole role;
+	private T role;
 	@ManyToOne
 	@JoinColumn(name = "feature_id")
-	private SystemFeature feature;
+	private V feature;
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
 	}
-	public SystemRole getRole() {
+	public T getRole() {
 		return role;
 	}
-	public void setRole(SystemRole role) {
+	public void setRole(T role) {
 		this.role = role;
 	}
-	public SystemFeature getFeature() {
+	public V getFeature() {
 		return feature;
 	}
-	public void setFeature(SystemFeature feature) {
+	public void setFeature(V feature) {
 		this.feature = feature;
 	}
 }

@@ -10,13 +10,13 @@ import javax.persistence.OneToMany;
 import py.org.atom.heart.project.entity.EntityBase;
 
 @MappedSuperclass
-public class SystemFeature extends EntityBase{
+public class SystemFeature<T> extends EntityBase{
 	@Id
 	private String id;
 	@Column(name="description")
 	private String description;
 	@OneToMany(mappedBy = "feature")
-	private Set<SystemRoleFeature> roleFeatures;		
+	private Set<T> roleFeatures;		
 	public String getId() {
 		return id;
 	}
@@ -29,10 +29,10 @@ public class SystemFeature extends EntityBase{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Set<SystemRoleFeature> getRoleFeatures() {
+	public Set<T> getRoleFeatures() {
 		return roleFeatures;
 	}
-	public void setRoleFeatures(Set<SystemRoleFeature> roleFeatures) {
+	public void setRoleFeatures(Set<T> roleFeatures) {
 		this.roleFeatures = roleFeatures;
 	}		
 }

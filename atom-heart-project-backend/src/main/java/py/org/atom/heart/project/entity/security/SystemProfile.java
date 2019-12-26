@@ -10,11 +10,11 @@ import javax.persistence.Transient;
 import py.org.atom.heart.project.entity.InsertUpdateDisableBase;
 
 @MappedSuperclass
-public class SystemProfile extends InsertUpdateDisableBase{
+public class SystemProfile<T> extends InsertUpdateDisableBase{
 	@Id
 	private String id;
 	@OneToMany(mappedBy = "profile")
-	private Set<SystemUser> users;
+	private Set<T> users;
 	@Transient
 	public boolean isActive() {
 		if(this.getDisableDate() != null) return false; else return true;
@@ -25,10 +25,10 @@ public class SystemProfile extends InsertUpdateDisableBase{
 	public void setId(String id) {
 		this.id = id;
 	}
-	public Set<SystemUser> getUsers() {
+	public Set<T> getUsers() {
 		return users;
 	}
-	public void setUsers(Set<SystemUser> users) {
+	public void setUsers(Set<T> users) {
 		this.users = users;
 	}
 }

@@ -11,14 +11,14 @@ import javax.persistence.Transient;
 import py.org.atom.heart.project.entity.InsertUpdateDisableBase;
 
 @MappedSuperclass
-public class SystemRole extends InsertUpdateDisableBase{
+public class SystemRole<T,V> extends InsertUpdateDisableBase{
 	@Id
 	@GeneratedValue
 	private long id;
 	@OneToMany(mappedBy = "user")
-	private Set<SystemUserRole> userRoles;
+	private Set<T> userRoles;
 	@OneToMany(mappedBy = "feature")
-	private Set<SystemRoleFeature> roleFeatures;	
+	private Set<V> roleFeatures;	
 	@Transient
 	public boolean isActive() {
 		if(this.getDisableDate() != null) return false; else return true;
@@ -29,16 +29,16 @@ public class SystemRole extends InsertUpdateDisableBase{
 	public void setId(long id) {
 		this.id = id;
 	}
-	public Set<SystemUserRole> getUserRoles() {
+	public Set<T> getUserRoles() {
 		return userRoles;
 	}
-	public void setUserRoles(Set<SystemUserRole> userRoles) {
+	public void setUserRoles(Set<T> userRoles) {
 		this.userRoles = userRoles;
 	}
-	public Set<SystemRoleFeature> getRoleFeatures() {
+	public Set<V> getRoleFeatures() {
 		return roleFeatures;
 	}
-	public void setRoleFeatures(Set<SystemRoleFeature> roleFeatures) {
+	public void setRoleFeatures(Set<V> roleFeatures) {
 		this.roleFeatures = roleFeatures;
 	}	
 }
