@@ -1,15 +1,9 @@
 package py.org.atom.heart.project.web.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
-import javax.faces.context.FacesContext;
 
 import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
@@ -20,46 +14,61 @@ import py.org.atom.heart.project.FrontendBase;
 import py.org.atom.heart.project.service.ServiceBase;
 
 public abstract class ControllerBase<T,V> extends FrontendBase{
+	
 	@Inject
     protected Conversation conversation;
-	public static final char FORM = 'f';
-	public static final char LIST = 'l';
-	public static final int DATA_TABLE_DEFAULT_PAGE_SIZE=15;
-	private char screen = LIST;
+	private String screen = Constants.LIST;
 	private T instance;
 	private List<FilterField> filters = new ArrayList<FilterField>();
 	private List<ListField> listFields = new ArrayList<ListField>();
 	private List<FormField> formFields = new ArrayList<FormField>();
 	private Map<String,List<ViewField>> viewFields = new LinkedHashMap<String,List<ViewField>>();
 	private LinkedHashMap<String, Boolean> sort = new LinkedHashMap<String,Boolean>(); 
+	private String sortKey;
 	protected String user;
-	protected String baseQuery;
+	protected String baseQuery = Constants.BASE_QUERY;
+	protected String baseCount = Constants.BASE_COUNT;
 	private LazyDataModel<T> dataList = null;
-	private int pageSize=DATA_TABLE_DEFAULT_PAGE_SIZE;
-	protected V service;
+	private int pageSize=Constants.DATA_TABLE_DEFAULT_PAGE_SIZE;
+	protected V service; // The class that extends this shall inject the @EJB stateless
 	protected abstract T newInstance();
 	public abstract void init();
 	public abstract void searchAction();
+	public abstract void viewAction();
 	public abstract void clearAction();
 	public abstract void removeAction();
 	public abstract void editAction();
 	public abstract void newAction();
 	public abstract void updateAction();
+	protected Class clazz;
+	public void start() {
+		if(this.conversation.isTransient())	this.conversation.begin();
+		if(this.conversation != null) this.conversation.setTimeout(10800000);
+	}	
 	protected void search() {
+		if(this.baseQuery.trim().equals(Constants.BASE_QUERY)) this.baseQuery = this.baseQuery.replace("[entity]", this.clazz == null ? "" : this.clazz.getCanonicalName());
+		if(this.baseCount.trim().equals(Constants.BASE_COUNT)) this.baseCount = this.baseCount.replace("[entity]", this.clazz == null ? "" : this.clazz.getCanonicalName());
 		ServiceBase sb = (ServiceBase) this.service;
-		this.dataList = new LazyModelBase<T>(sb, this.baseQuery, filters, sort);
+		this.dataList = new LazyModelBase<T>(sb, this.baseQuery, this.baseCount, filters, sort);
 	}
 	protected void clear() {
 		this.dataList = null;
+		this.filters = new ArrayList<FilterField>();
+		this.listFields = new ArrayList<ListField>();
+		this.formFields = new ArrayList<FormField>();
+		this.viewFields = new LinkedHashMap<String,List<ViewField>>();
+		this.sort = new LinkedHashMap<String,Boolean>();
 		init();
 	}
-	public void addSortAction(String key) {
+	public void addSortAction() {
+		String key = this.sortKey;
 		if(key == null || key.trim().length() <= 0) return;
 		if(this.sort.containsKey(key)) {
 			if(this.sort.get(key)) this.sort.put(key,false); else this.sort.put(key,true);
 		}else this.sort.put(key, true);
 	}
-	public void remSortAction(String key) {
+	public void remSortAction() {
+		String key = this.sortKey;
 		if(key == null || key.trim().length() <= 0) return;
 		if(!this.sort.containsKey(key)) return;
 		this.sort.remove(key);
@@ -68,27 +77,6 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 		if(this.sort == null || this.sort.size() <= 0) return;
 		this.searchAction();
 	}	
-	public void start() {
-		if(this.conversation.isTransient()) this.conversation.begin();
-		if(this.conversation != null) this.conversation.setTimeout(10800000);		
-	}
-	protected void error(String msg) {
-		this.showMsg(FacesMessage.SEVERITY_ERROR, msg);
-	}
-	protected void info(String msg) {
-		this.showMsg(FacesMessage.SEVERITY_INFO, msg);
-	}	
-	protected void warn(String msg) {
-		this.showMsg(FacesMessage.SEVERITY_WARN, msg);
-	}
-	protected void fatal(String msg) {
-		this.showMsg(FacesMessage.SEVERITY_FATAL, msg);
-	}	
-	protected void fatal(Exception ex) {
-		this.fatal(ex.getMessage());
-		ex.printStackTrace();
-	}
-	
 	public T getInstance() {
 		return instance;
 	}
@@ -97,11 +85,11 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 		this.instance = instance;
 	}
 
-	public char getScreen() {
+	public String getScreen() {
 		return screen;
 	}
 
-	public void setScreen(char screen) {
+	public void setScreen(String screen) {
 		this.screen = screen;
 	}
 	
@@ -173,16 +161,10 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
-	private void showMsg(Severity s, String msg){
-		if(msg == null)	return;
-		String type = "";
-		if(s.equals(FacesMessage.SEVERITY_ERROR)) type = "ERROR: ";
-		if(s.equals(FacesMessage.SEVERITY_INFO)) type = "INFO: ";
-		if(s.equals(FacesMessage.SEVERITY_WARN)) type = "WARN: ";
-		if(s.equals(FacesMessage.SEVERITY_FATAL)) type = "FATAL ERROR: ";
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-		FacesMessage fm = new FacesMessage(s, type + (this.user == null ? "" : this.user + " ") + sdf.format(new Date()), msg);
-		FacesContext.getCurrentInstance().addMessage(null,fm);		
-	}	
-	
+	public String getSortKey() {
+		return sortKey;
+	}
+	public void setSortKey(String sortKey) {
+		this.sortKey = sortKey;
+	}
 }

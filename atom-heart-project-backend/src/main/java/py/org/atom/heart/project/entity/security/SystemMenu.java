@@ -12,10 +12,12 @@ public class SystemMenu extends EntityBase{
 	private String id;
 	@Column(name="parent",nullable=false)
 	private String parent;
-	@Column(name="uri",nullable=false)
-	private String uri;
+	@Column(name="url",nullable=false)
+	private String url;
 	@Column(name="title",nullable=false)
 	private String title;
+	@Column(name="index",nullable=false)
+	private int index;
 	public String getId() {
 		return id;
 	}
@@ -28,11 +30,11 @@ public class SystemMenu extends EntityBase{
 	public void setParent(String parent) {
 		this.parent = parent;
 	}
-	public String getUri() {
-		return uri;
+	public String getUrl() {
+		return url;
 	}
-	public void setUri(String uri) {
-		this.uri = uri;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	public String getTitle() {
 		return title;
@@ -40,4 +42,10 @@ public class SystemMenu extends EntityBase{
 	public void setTitle(String title) {
 		this.title = title;
 	}
+	public int getIndex() {
+		return index;
+	}
+	public void setIndex(int index) {
+		this.index = index;
+	}	
 }

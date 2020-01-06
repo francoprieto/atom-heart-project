@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:core="http://java.sun.com/jsp/jstl/core"
+    xmlns:cc="http://java.sun.com/jsf/composite">
+    <cc:interface>
+    	<cc:attribute name="loginTitle" required="true" shortDescription="Login title"/>
+    	<cc:attribute name="userLabel" required="true" shortDescription="User label"/>
+    	<cc:attribute name="userTxt" required="true" shortDescription="User text field"/>
+    	<cc:attribute name="passwordTxt" required="true" shortDescription="Password text field"/>
+    	<cc:attribute name="loginBtnLabel" required="true" shortDescription="Label of login button"/>
+    	<cc:attribute name="loginBtnAction" required="true" method-signature="void loginBtnAction()"/>
+    </cc:interface>
+    <cc:implementation>
+    	<h:form id="jsf-form">
+    		<p:panel header="#{cc.attrs.loginTitle}" style="width:40%;margin:auto">
+    			<p:messages id="messages" showDetail="true"/>
+    			<h:panelGrid columns="3" style="width:80%;margin:auto">
+    				<h:outputLabel value="#{cc.attrs.userLabel}:" for="txt1"/>
+    				<p:inputText value="#{cc.attrs.userTxt}" id="txt1" size="30" required="true" requiredMessage="#{cc.attrs.userLabel}"/>
+    				<p:message for="txt1"/>
+    				<h:outputLabel value="#{cc.attrs.passwordLabel}:" for="txt2"/>
+    				<p:password value="#{cc.attrs.passwordTxt}" id="txt2" size="30" required="true" requiredMessage="#{cc.attrs.passwordLabel}"/>
+    				<p:message for="txt1"/>			
+    			</h:panelGrid>
+    			<f:facet name="footer">
+    				<p:commandButton value="#{cc.attrs.loginBtnLabel}" action="#{cc.attrs.loginBtnAction}" update="jsf-form" style="width : 100%" ajax="false"/>
+    			</f:facet>
+    		</p:panel>
+    	</h:form>
+    </cc:implementation>
+</html>

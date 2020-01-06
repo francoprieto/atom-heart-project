@@ -7,12 +7,15 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import py.org.atom.heart.project.BackendBase;
 
+// @Stateless // Annotate this as a Stateless enterprise java bean
 public class ServiceBase<T> extends BackendBase {
 	
+	@PersistenceContext
 	protected EntityManager em;
 	
 	public Long count(String query, Map<String,Object> parms){
@@ -40,7 +43,9 @@ public class ServiceBase<T> extends BackendBase {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public T getById(Class c, Object id) {
-		return (T) this.em.find(c, id);
+		Object o = this.em.find(c, id);
+		if(o == null) return null;
+		return (T) o;
 	}
 	@SuppressWarnings("rawtypes")
 	public Object getIdValue(T in) {

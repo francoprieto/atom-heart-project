@@ -67,6 +67,7 @@ public class DataBase extends FrontendBase{
 		this.dateValue = dateValue;
 	}
 	public Object getValue() {
+		if(this.stringValue != null && this.stringValue.trim().length() <= 0) this.stringValue = null;
 		if(this.type == String.class) return this.stringValue;
 		else if(this.type == Integer.class) return this.integerValue;
 		else if(this.type == Long.class) return this.longValue;

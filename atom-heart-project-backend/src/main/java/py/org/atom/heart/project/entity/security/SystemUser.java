@@ -13,7 +13,7 @@ import javax.persistence.Transient;
 import py.org.atom.heart.project.entity.InsertUpdateDisableBase;
 
 @MappedSuperclass
-public class SystemUser<T,V> extends InsertUpdateDisableBase{
+public class SystemUser<T extends SystemUserRole,V extends SystemProfile> extends InsertUpdateDisableBase{
 	@Id
 	private String id;
 	@Column(name="su")

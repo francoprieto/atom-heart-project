@@ -11,14 +11,15 @@ import javax.persistence.PrePersist;
 import py.org.atom.heart.project.entity.InsertBase;
 
 @MappedSuperclass
-public class SystemUserRole<T extends SystemUser,V extends SystemRole> extends InsertBase{
+public class SystemProfileRole<T extends SystemProfile,V extends SystemRole> extends InsertBase{
+	
 	@Id
 	private long id;
 	@ManyToOne
-    @JoinColumn(name = "user_id")
-	private T user;
+    @JoinColumn(name = "profile_id")
+	private T profile;
 	@ManyToOne
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "role_id")	
 	private V role;
 	public long getId() {
 		return id;
@@ -26,11 +27,11 @@ public class SystemUserRole<T extends SystemUser,V extends SystemRole> extends I
 	public void setId(long id) {
 		this.id = id;
 	}
-	public T getUser() {
-		return user;
+	public T getProfile() {
+		return profile;
 	}
-	public void setUser(T user) {
-		this.user = user;
+	public void setProfile(T profile) {
+		this.profile = profile;
 	}
 	public V getRole() {
 		return role;

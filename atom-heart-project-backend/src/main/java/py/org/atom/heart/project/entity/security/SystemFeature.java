@@ -10,7 +10,7 @@ import javax.persistence.OneToMany;
 import py.org.atom.heart.project.entity.EntityBase;
 
 @MappedSuperclass
-public class SystemFeature<T> extends EntityBase{
+public class SystemFeature<T extends SystemRoleFeature> extends EntityBase{
 	@Id
 	private String id;
 	@Column(name="description")

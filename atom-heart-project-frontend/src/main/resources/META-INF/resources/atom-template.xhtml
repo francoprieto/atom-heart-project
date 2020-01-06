@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+	<f:view contentType="text/html" encoding="UTF-8">
+        <h:head>
+            <title><ui:insert name="appName" /></title>
+            <meta charset="utf-8"></meta>
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"></meta>
+            <style>
+				.ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield
+					{
+					background: none !important;
+					border: 1px solid #CCCCCC;
+					color: #333333;
+				}
+				
+				.ui-paginator-page .ui-state-default .ui-state-active {
+				color : #FFFFFF;
+				background: #26a59a;
+				}
+				
+				.ui-chkbox .ui-chkbox-box {
+					background : #FFFFFF !important;
+				}
+				
+				.ui-chkbox-icon.ui-icon-check{
+					background : #CCCCCC !important;
+					color : #FFFFFF;
+					background-position:center;
+				}
+				
+				.ui-selectonemenu {
+					background: #FFFFFF !important;
+					color: #333333;
+				}
+				
+				.ui-panelgrid-cell {
+					border-width: 0px;
+    				border-color: inherit;
+    				padding: 0px 10px;
+				}
+				.ui-datatable tr.ui-datatable-even:hover, .ui-datatable tr.ui-datatable-odd:hover{
+					background: #E9EAED;
+				}
+				.ui-layout-unit-content-custom .ui-layout-unit-content {
+					position: relative;
+					height: 50px;
+					border: none;
+					visibility: visible;
+					background: #354044;
+					overflow: hidden;
+				}
+				.ui-growl {
+					top: 40px;
+				}
+				.ui-datagrid-content {
+					border: none;
+				}     
+				.ui-datatable-hor-scroll .ui-datatable-tablewrapper, .scrolling-div .ui-datatable-tablewrapper{
+			    	overflow: auto;
+	    			width: 100%;
+	    			padding-bottom: 5px;
+	    		}
+	    		.ui-datatable tr.ui-datatable-even:hover, .ui-datatable tr.ui-datatable-odd:hover{
+					background: #E9EAED;
+				}
+	    		ui-corner-all{width : 200px; border : none; overflow : hidden;}
+			</style>
+        </h:head>
+        <h:body style="padding: 0px; margin : 0px">
+			<p:outputPanel id="msgs"><h:form id="atomMsgForm"><p:growl id="growl" showDetail="true" /></h:form></p:outputPanel>        
+			<h:form>	
+			    <p:panelGrid style="width : 100%; background : #354044; border : none; margin: none; overflow : hidden;">
+			        <p:column style="border : none"><div style="color : #FFFFFF; font-size: 40px"><ui:insert name="appName" /></div></p:column>  
+			 		<p:column style="float: right; border : none;">
+			 			<p:panelGrid>
+			 				<p:column style="text-align : right; padding : 2px; margin : 0px; border : none"><p:clock pattern="dd/MM/yyyy HH:mm:ss" mode="server" /></p:column>
+			        		<p:column style="text-align : left; padding : 2px; margin : 0px; border : none">
+			        			<ui:insert name="closeSesstion" />
+			        		</p:column>
+			        	</p:panelGrid>
+			        </p:column>
+			    </p:panelGrid>
+			</h:form>
+			<ui:insert name="content"></ui:insert>
+			<p:ajaxStatus style="position:fixed;left:50%;top:30%">
+				<f:facet name="start">
+					<div style="background-color: #FFFFFF; border: 1px solid #333333; text-align: center; padding: 2px">
+						<p:graphicImage library="atom-heart-project-frontend" name="ajax-loader.gif" />
+					</div>
+				</f:facet>
+		
+				<f:facet name="complete">
+					<h:outputText value="" />
+				</f:facet>
+			</p:ajaxStatus>			
+        </h:body>        
+	</f:view>
+</html>

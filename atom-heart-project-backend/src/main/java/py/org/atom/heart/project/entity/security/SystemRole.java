@@ -1,19 +1,19 @@
 package py.org.atom.heart.project.entity.security;
 
+import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Transient;
 
 import py.org.atom.heart.project.entity.InsertUpdateDisableBase;
 
 @MappedSuperclass
-public class SystemRole<T,V> extends InsertUpdateDisableBase{
+public class SystemRole<T extends SystemUserRole,V extends SystemRoleFeature> extends InsertUpdateDisableBase{
 	@Id
-	@GeneratedValue
 	private long id;
 	@OneToMany(mappedBy = "user")
 	private Set<T> userRoles;
@@ -40,5 +40,10 @@ public class SystemRole<T,V> extends InsertUpdateDisableBase{
 	}
 	public void setRoleFeatures(Set<V> roleFeatures) {
 		this.roleFeatures = roleFeatures;
+	}	
+	@PrePersist
+	public void prePersist() {
+		this.id = (new Date()).getTime();
+		this.setInsertDate(new Date());
 	}	
 }

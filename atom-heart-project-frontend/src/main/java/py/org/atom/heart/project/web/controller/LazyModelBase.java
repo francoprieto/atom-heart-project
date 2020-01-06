@@ -8,6 +8,7 @@ import java.util.Map;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
 
 import py.org.atom.heart.project.service.ServiceBase;
 
@@ -21,11 +22,12 @@ public class LazyModelBase<T> extends LazyDataModel<T>{
 	protected List<FilterField> filters;
 	protected LinkedHashMap<String, Boolean> sort;
 	protected List<T> data;
-	public LazyModelBase(ServiceBase<T> service, String query, List<FilterField> filters, LinkedHashMap<String, Boolean> sort) {
+	public LazyModelBase(ServiceBase<T> service, String query, String count, List<FilterField> filters, LinkedHashMap<String, Boolean> sort) {
 		this.service = service;
 		this.filters = filters;
 		this.sort = sort;
 		this.query = query;
+		this.count = count;
 	}
 	
     public T getRowData(String rowKey) {
@@ -40,8 +42,8 @@ public class LazyModelBase<T> extends LazyDataModel<T>{
     public Object getRowKey(T o) {
         return this.service.getIdValue(o);
     }    
-    
-	public List<T> load(int first, int pageSize, Map<String, SortMeta> sortMeta, Map<String, FilterMeta> filterMeta){
+
+	public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrden, Map<String, Object> filterMeta){
 		Map<String,Map<String,Object>> cq = this.getFullQuery(true);
 		Map<String,Map<String,Object>> rq = this.getFullQuery(false);
 		Long count = null;
@@ -71,11 +73,16 @@ public class LazyModelBase<T> extends LazyDataModel<T>{
 		String w = "";
 		Map<String,Object> prms = new HashMap<String, Object>();
 		for(FilterField ff : this.filters) {
-			if(ff.getOperator().trim().equals(FilterField.IS_NOT_NULL)
-					|| ff.getOperator().trim().equals(FilterField.IS_NULL)) 
-				prms.put(ff.getParmameter(), ff.getValue());
-			if(w.trim().length() > 0) w += " and ";
-			w += ff.getKey() + " " + ff.getOperator() + " " + ff.getParmameter();
+			if(ff.getValue() != null) {
+				boolean par = false;
+				if(!ff.getOperator().trim().equals(FilterField.IS_NOT_NULL)
+						&& !ff.getOperator().trim().equals(FilterField.IS_NULL)) { 
+					prms.put(ff.getParmameter(), ff.getValue());
+					par = true;
+				}
+				if(w.trim().length() > 0) w += " and ";
+				w += ff.getKey() + " " + ff.getOperator() + " " + (par ? ":" + ff.getParmameter() : "" );
+			}
 		}
 		if(w.trim().length() > 0) w = " Where " + w;
 		String o = "";

@@ -8,8 +8,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME) 
 public @interface MenuItem{
-	 String[] path();
 	 int idx();
 	 String name();
+	 String parent();
 	 String url();
+	 String title();
 }
