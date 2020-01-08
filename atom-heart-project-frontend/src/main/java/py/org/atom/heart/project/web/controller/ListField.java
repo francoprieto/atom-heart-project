@@ -1,6 +1,10 @@
 package py.org.atom.heart.project.web.controller;
 
-public class ListField extends DataBase{
+import java.io.Serializable;
+
+public class ListField extends DataBase implements Serializable{
+
+	private static final long serialVersionUID = 2044008000158315991L;
 	private String title;
 	private String property1;
 	private String property2;

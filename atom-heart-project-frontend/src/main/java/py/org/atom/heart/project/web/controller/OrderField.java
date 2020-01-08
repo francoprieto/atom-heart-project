@@ -1,9 +1,12 @@
 package py.org.atom.heart.project.web.controller;
 
+import java.io.Serializable;
+
 import py.org.atom.heart.project.FrontendBase;
 
-public class OrderField extends FrontendBase{
+public class OrderField extends FrontendBase implements Serializable{
 
+	private static final long serialVersionUID = 900448613081501447L;
 	private String key;
 	private boolean asc;
 	

@@ -76,12 +76,14 @@ public class LazyModelBase<T> extends LazyDataModel<T>{
 			if(ff.getValue() != null) {
 				boolean par = false;
 				if(!ff.getOperator().trim().equals(FilterField.IS_NOT_NULL)
-						&& !ff.getOperator().trim().equals(FilterField.IS_NULL)) { 
+						&& !ff.getOperator().trim().equals(FilterField.IS_NULL)
+						&& !ff.getOperator().trim().equals(FilterField.IS)) { 
 					prms.put(ff.getParmameter(), ff.getValue());
 					par = true;
 				}
 				if(w.trim().length() > 0) w += " and ";
 				w += ff.getKey() + " " + ff.getOperator() + " " + (par ? ":" + ff.getParmameter() : "" );
+				if(ff.getOperator().trim().equals(FilterField.IS) && ff.getOptions() != null && ff.getOptions().size() > 0) w += ff.getStringValue();
 			}
 		}
 		if(w.trim().length() > 0) w = " Where " + w;

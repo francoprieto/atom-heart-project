@@ -1,12 +1,14 @@
 package py.org.atom.heart.project.web.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-public class FilterField extends DataBase{
+public class FilterField extends DataBase implements Serializable{
 
+	private static final long serialVersionUID = -648042054760834155L;
 	public static final String EQ="=";
 	public static final String NEQ="<>";
 	public static final String GT=">";
@@ -16,7 +18,7 @@ public class FilterField extends DataBase{
 	public static final String LIKE="like";
 	public static final String IS_NOT_NULL="is not null";
 	public static final String IS_NULL="is null";
-	
+	public static final String IS="is";
 	private String label;
 	private String key;
 	private String operator;

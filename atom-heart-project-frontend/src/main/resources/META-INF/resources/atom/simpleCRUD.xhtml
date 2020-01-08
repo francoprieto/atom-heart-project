@@ -16,18 +16,12 @@
     	<cc:attribute name="canCreate" required="true" shortDescription="Can create data"/>
     	<cc:attribute name="canUpdate" required="true" shortDescription="Can update data"/>
     	<cc:attribute name="canDelete" required="true" shortDescription="Can delete data"/>
+    	<cc:attribute name="canExport" shortDescription="Can export data"/>
     	<!-- String parameters -->
     	<cc:attribute name="title" required="true" shortDescription="Title of the screen"/>
     	<cc:attribute name="path" required="true" shortDescription="Path screen"/>
     	<cc:attribute name="sortKey" shortDescription="Field to be sorted by"/>
-    	<cc:attribute name="allLabel" shortDescription="Label for the all word"/>
-    	<cc:attribute name="searchLabel" shortDescription="Label for the search option"/>
-    	<cc:attribute name="clearLabel" shortDescription="Label for the clear option"/>
-    	<cc:attribute name="viewLabel" shortDescription="Label for the view option"/>
-    	<cc:attribute name="editLabel" shortDescription="Label for the edit option"/>
-    	<cc:attribute name="newLabel" shortDescription="Label for the new option"/>
-    	<cc:attribute name="saveLabel" shortDescription="Label for the save option"/>
-    	<cc:attribute name="updateLabel" shortDescription="Label for the update option"/>
+    	<cc:attribute name="labels" shortDescription="A Map for all Labels"/>
     	<!-- Bean attribute parameters -->
     	<cc:attribute name="screen" required="true" shortDescription="Screen attribute"/>    	
     	<!-- Method parameters -->
@@ -45,7 +39,9 @@
 		<cc:attribute name="filterList" required="true" shortDescription="List of filters" />
 		<cc:attribute name="dataListFields" required="true" shortDescription="List of fields presented in the data list" />
 		<cc:attribute name="dataList" required="true" shortDescription="List of instances" />
-		<cc:attribute name="sortList" required="true" shortDescription="List of sort properties" />				
+		<cc:attribute name="sortList" required="true" shortDescription="List of sort properties" />		
+		<cc:attribute name="xlsOptions" shortDescription="Options for the Excel exporter" />
+		<cc:attribute name="pdfOptions" shortDescription="Options for the PDF exporter" />				
     </cc:interface>
     
     <cc:implementation>
@@ -75,15 +71,15 @@
 						    			<p:inputNumber value="#{filter.doubleValue}" decimalPlaces="2" rendered="#{filter.type.canonicalName == 'java.lang.Double'}" size="#{filter.size}"/>
 						    			<p:inputText value="#{filter.charValue}" rendered="#{filter.type.canonicalName == 'java.lang.Character'}" size="#{filter.size}"/>
 										<p:selectOneMenu value="#{filter.stringValue}" rendered="#{not empty filter.options and filter.type.canonicalName == 'java.lang.String'}">
-											<f:selectItem itemLabel="#{cc.attrs.allLabel}" noSelectionOption="true"/>
+											<f:selectItem itemLabel="#{cc.attrs.labels['all']}" noSelectionOption="true"/>
 											<f:selectItems value="#{filter.options.entrySet().toArray()}" var="entry" itemLabel="#{entry.key}" itemValue="#{entry.value}"/>
 										</p:selectOneMenu>
 										<p:selectOneMenu value="#{filter.longValue}" rendered="#{not empty filter.options and filter.type.canonicalName == 'java.lang.Long'}">
-											<f:selectItem itemLabel="#{cc.attrs.allLabel}" noSelectionOption="true"/>
+											<f:selectItem itemLabel="#{cc.attrs.labels['all']}" noSelectionOption="true"/>
 											<f:selectItems value="#{filter.options.entrySet().toArray()}" var="entry" itemLabel="#{entry.key}" itemValue="#{entry.value}"/>
 										</p:selectOneMenu>
 										<p:selectOneMenu value="#{filter.integerValue}" rendered="#{not empty filter.options and filter.type.canonicalName == 'java.lang.Integer'}">
-											<f:selectItem itemLabel="#{cc.attrs.allLabel}" noSelectionOption="true"/>
+											<f:selectItem itemLabel="#{cc.attrs.labels['all']}" noSelectionOption="true"/>
 											<f:selectItems value="#{filter.options.entrySet().toArray()}" var="entry" itemLabel="#{entry.key}" itemValue="#{entry.value}"/>
 										</p:selectOneMenu>
 									</h:panelGroup>
@@ -92,8 +88,8 @@
 						</p:repeat>			
 		   			</p:panelGrid>
 		   			<f:facet name="footer">
-		   				<p:commandButton value="#{empty cc.attrs.searchLabel ? 'Search' : cc.attrs.searchLabel}" action="#{cc.attrs.searchMethod}" update=":msgs, listPanel" />
-		   				<p:commandButton value="#{empty cc.attrs.clearLabel ? 'Clear' : cc.attrs.clearLabel}" action="#{cc.attrs.clearMethod}" update=":msgs, listPanel, filterPanel" />
+		   				<p:commandButton value="#{empty cc.attrs.labels['search'] ? 'Search' : cc.attrs.labels['search']}" action="#{cc.attrs.searchMethod}" update=":msgs, listPanel" />
+		   				<p:commandButton value="#{empty cc.attrs.labels['clear'] ? 'Clear' : cc.attrs.labels['clear']}" action="#{cc.attrs.clearMethod}" update=":msgs, listPanel, filterPanel" />
 		   			</f:facet>
 		   		</p:panel>
 		   		<h:panelGroup id="listPanel">
@@ -102,6 +98,16 @@
 						currentPageReportTemplate="{currentPage}/{totalPages} ({totalRecords})" styleClass="ui-datatable-hor-scroll"
 						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
 				        id="dataTable" lazy="true" emptyMessage="..." widgetVar="dataTable">
+				        <f:facet name="{Exporters}">
+				        	<div style="float:right; font-size : x-small;">
+				        		<h:commandLink value="XLS" rendered="#{cc.attrs.canExport}">
+				        			<p:dataExporter type="xls" target="dataTable" fileName="export" options="#{cc.attrs.xlsOptions}" />
+				        		</h:commandLink> - 
+				        		<h:commandLink value="PDF" rendered="#{cc.attrs.canExport}">
+				        			<p:dataExporter type="pdf" target="dataTable" fileName="export" options="#{cc.attrs.pdfOptions}" />
+				        		</h:commandLink>				        		
+				        	</div>
+				        </f:facet>
 				        <p:column headerText="#" style="width:calc(20px)" exportable="false"><h:outputText value="#{idx +1}" style="font-size : x-small;"/></p:column>
 	        			<core:forEach items="#{cc.attrs.dataListFields}" var="c">
 					    	<p:column style="width:calc(100px)" >

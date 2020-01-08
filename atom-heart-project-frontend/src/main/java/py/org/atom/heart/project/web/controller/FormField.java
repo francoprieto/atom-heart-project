@@ -1,9 +1,12 @@
 package py.org.atom.heart.project.web.controller;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class FormField extends DataBase{
+public class FormField extends DataBase implements Serializable{
+
+	private static final long serialVersionUID = 5799250235892887408L;
 	private String label;
 	private String key;
 	private boolean required;

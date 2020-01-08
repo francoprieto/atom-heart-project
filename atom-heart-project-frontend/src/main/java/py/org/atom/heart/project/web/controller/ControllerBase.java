@@ -1,6 +1,7 @@
 package py.org.atom.heart.project.web.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,8 @@ import java.util.Map;
 import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 
+import org.primefaces.component.export.ExcelOptions;
+import org.primefaces.component.export.PDFOptions;
 import org.primefaces.model.LazyDataModel;
 
 import py.org.atom.heart.project.FrontendBase;
@@ -22,6 +25,7 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	private List<FilterField> filters = new ArrayList<FilterField>();
 	private List<ListField> listFields = new ArrayList<ListField>();
 	private List<FormField> formFields = new ArrayList<FormField>();
+	protected Map<String,String> labels = new HashMap<String,String>();
 	private Map<String,List<ViewField>> viewFields = new LinkedHashMap<String,List<ViewField>>();
 	private LinkedHashMap<String, Boolean> sort = new LinkedHashMap<String,Boolean>(); 
 	private String sortKey;
@@ -40,6 +44,8 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	public abstract void editAction();
 	public abstract void newAction();
 	public abstract void updateAction();
+    protected ExcelOptions xlsOpts;
+    protected PDFOptions pdfOpts;	
 	protected Class clazz;
 	public void start() {
 		if(this.conversation.isTransient())	this.conversation.begin();
@@ -77,6 +83,7 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 		if(this.sort == null || this.sort.size() <= 0) return;
 		this.searchAction();
 	}	
+
 	public T getInstance() {
 		return instance;
 	}
@@ -143,6 +150,14 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 		vfs.add(o);
 		this.viewFields.put(tab, vfs);
 	}
+	protected void addLabel(String key, String value) {
+		if(key == null || value == null) return;
+		this.labels.put(key, value);
+	}
+	protected void remLabel(String key) {
+		if(key == null || !this.labels.containsKey(key)) return;
+		this.labels.remove(key);
+	}
 	public LinkedHashMap<String, Boolean> getSort() {
 		return sort;
 	}
@@ -166,5 +181,41 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	}
 	public void setSortKey(String sortKey) {
 		this.sortKey = sortKey;
+	}
+	public ExcelOptions getXlsOpts() {
+    	if(this.xlsOpts == null) {
+	        xlsOpts = new ExcelOptions();
+	        xlsOpts.setFacetBgColor("#CCCCCC");
+	        xlsOpts.setFacetFontSize("10");
+	        xlsOpts.setFacetFontColor("#000000");
+	        xlsOpts.setFacetFontStyle("BOLD");
+	        xlsOpts.setCellFontColor("#000000");
+	        xlsOpts.setCellFontSize("10");
+    	}	
+		return xlsOpts;
+	}
+	public void setXlsOpts(ExcelOptions xlsOpts) {
+		this.xlsOpts = xlsOpts;
+	}
+	public PDFOptions getPdfOpts() {
+    	if(this.pdfOpts == null) {
+	        pdfOpts = new PDFOptions();
+	        pdfOpts.setFacetBgColor("#CCCCCC");
+	        pdfOpts.setFacetFontSize("10");
+	        pdfOpts.setFacetFontColor("#000000");
+	        pdfOpts.setFacetFontStyle("BOLD");
+	        pdfOpts.setCellFontColor("#000000");
+	        pdfOpts.setCellFontSize("10");
+    	}		
+		return pdfOpts;
+	}
+	public void setPdfOpts(PDFOptions pdfOpts) {
+		this.pdfOpts = pdfOpts;
+	}
+	public Map<String, String> getLabels() {
+		return labels;
+	}
+	public void setLabels(Map<String, String> labels) {
+		this.labels = labels;
 	}
 }
