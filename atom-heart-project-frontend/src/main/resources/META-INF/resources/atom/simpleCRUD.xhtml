@@ -11,7 +11,7 @@
     <cc:interface>
     
 		<!-- Boolean parameters -->
-    	<cc:attribute name="canRead" required="true" shortDescription="Can query data"/>
+    	<cc:attribute name="canSearch" required="true" shortDescription="Can query data"/>
     	<cc:attribute name="canView" required="true" shortDescription="Can view details"/>
     	<cc:attribute name="canCreate" required="true" shortDescription="Can create data"/>
     	<cc:attribute name="canUpdate" required="true" shortDescription="Can update data"/>
@@ -47,40 +47,40 @@
     <cc:implementation>
 
     <span><h:outputText value="#{cc.attrs.path}" /></span>
-    <p:panel header="#{cc.attrs.title}">
+    <p:panel header="#{cc.attrs.title}" deferred="true" id="screen">
 	<!--Screen starts here -->
-    	<h:panelGroup id="screen">
+    	<h:panelGroup id="wrapper">
     		
 			<!-- List fragment starts here -->
 	    	<h:form id="list-form" rendered="#{cc.attrs.screen == 'L'}">
 	    		<p:panel toggleable="true" collapsed="false" id="filterPanel" widgetVar="filterPanel">
-	    			<f:facet name="header"><h:outputText value="." style="font-size:small"/></f:facet>
+	    			<f:facet name="header"><h:outputText value="#{cc.attrs.labels['filterTitle']}" style="font-size:small"/></f:facet>
 		   			<p:panelGrid>
 		   				<p:repeat var="filter" value="#{cc.attrs.filterList}">
 		   					<p:row>
 			        			<p:column>
-						    		<h:outputLabel value="#{filter.label}: "/>
+						    		<h:outputLabel value="#{filter.label}: " style="font-size:small"/>
 						    	</p:column>
 						    	<p:column>
 									<h:panelGroup>
-						    			<p:inputText value="#{filter.stringValue}" rendered="#{filter.type.canonicalName == 'java.lang.String'}" size="#{filter.size}"/>
-						    			<p:inputNumber value="#{filter.integerValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.lang.Integer'}" size="#{filter.size}"/>
-						    			<p:calendar value="#{filter.dateValue}" pattern="dd/MM/yyyy" mask="true" showOn="button" size="10" rendered="#{filter.type == 'java.util.Date'}"/>
-						    			<p:inputNumber value="#{filter.longValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.lang.Long'}" size="#{filter.size}"/>
-						    			<p:inputNumber value="#{filter.bigDecimalValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.math.BigDecimal'}" size="#{filter.size}"/>
-						    			<p:inputNumber value="#{filter.doubleValue}" decimalPlaces="2" rendered="#{filter.type.canonicalName == 'java.lang.Double'}" size="#{filter.size}"/>
-						    			<p:inputText value="#{filter.charValue}" rendered="#{filter.type.canonicalName == 'java.lang.Character'}" size="#{filter.size}"/>
-										<p:selectOneMenu value="#{filter.stringValue}" rendered="#{not empty filter.options and filter.type.canonicalName == 'java.lang.String'}">
+						    			<p:inputText value="#{filter.stringValue}" rendered="#{filter.type.canonicalName == 'java.lang.String' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:inputNumber value="#{filter.integerValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.lang.Integer' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:calendar value="#{filter.dateValue}" pattern="dd/MM/yyyy" mask="true" showOn="button" size="10" rendered="#{filter.type == 'java.util.Date' and (empty filter.options)}"/>
+						    			<p:inputNumber value="#{filter.longValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.lang.Long' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:inputNumber value="#{filter.bigDecimalValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.math.BigDecimal' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:inputNumber value="#{filter.doubleValue}" decimalPlaces="2" rendered="#{filter.type.canonicalName == 'java.lang.Double' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:inputText value="#{filter.charValue}" rendered="#{filter.type.canonicalName == 'java.lang.Character' and (empty filter.options)}" size="#{filter.size}"/>
+										<p:selectOneMenu value="#{filter.stringValue}" rendered="#{(not empty filter.options) and filter.type.canonicalName == 'java.lang.String'}" >
 											<f:selectItem itemLabel="#{cc.attrs.labels['all']}" noSelectionOption="true"/>
-											<f:selectItems value="#{filter.options.entrySet().toArray()}" var="entry" itemLabel="#{entry.key}" itemValue="#{entry.value}"/>
+											<f:selectItems value="#{filter.options}"/>
 										</p:selectOneMenu>
-										<p:selectOneMenu value="#{filter.longValue}" rendered="#{not empty filter.options and filter.type.canonicalName == 'java.lang.Long'}">
+										<p:selectOneMenu value="#{filter.longValue}" rendered="#{(not empty filter.options) and filter.type.canonicalName == 'java.lang.Long'}">
 											<f:selectItem itemLabel="#{cc.attrs.labels['all']}" noSelectionOption="true"/>
-											<f:selectItems value="#{filter.options.entrySet().toArray()}" var="entry" itemLabel="#{entry.key}" itemValue="#{entry.value}"/>
+											<f:selectItems value="#{filter.options}"/>
 										</p:selectOneMenu>
-										<p:selectOneMenu value="#{filter.integerValue}" rendered="#{not empty filter.options and filter.type.canonicalName == 'java.lang.Integer'}">
+										<p:selectOneMenu value="#{filter.integerValue}" rendered="#{(not empty filter.options) and filter.type.canonicalName == 'java.lang.Integer'}">
 											<f:selectItem itemLabel="#{cc.attrs.labels['all']}" noSelectionOption="true"/>
-											<f:selectItems value="#{filter.options.entrySet().toArray()}" var="entry" itemLabel="#{entry.key}" itemValue="#{entry.value}"/>
+											<f:selectItems value="#{filter.options}"/>
 										</p:selectOneMenu>
 									</h:panelGroup>
 						    	</p:column>
@@ -88,8 +88,9 @@
 						</p:repeat>			
 		   			</p:panelGrid>
 		   			<f:facet name="footer">
-		   				<p:commandButton value="#{empty cc.attrs.labels['search'] ? 'Search' : cc.attrs.labels['search']}" action="#{cc.attrs.searchMethod}" update=":msgs, listPanel" />
-		   				<p:commandButton value="#{empty cc.attrs.labels['clear'] ? 'Clear' : cc.attrs.labels['clear']}" action="#{cc.attrs.clearMethod}" update=":msgs, listPanel, filterPanel" />
+		   				<p:commandButton icon="pi pi-search" value="#{empty cc.attrs.labels['search'] ? 'Search' : cc.attrs.labels['search']}" action="#{cc.attrs.searchMethod}" update=":msgs, listPanel" rendered="#{cc.attrs.canSearch}"/>
+		   				<p:commandButton icon="pi pi-times" value="#{empty cc.attrs.labels['clear'] ? 'Clear' : cc.attrs.labels['clear']}" action="#{cc.attrs.clearMethod}" update=":msgs, listPanel, filterPanel" rendered="#{cc.attrs.canSearch}"/>
+		   				<p:commandButton icon="pi pi-file-o" value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newMethod}" update=":msgs" rendered="#{cc.attrs.canCreate}"/>
 		   			</f:facet>
 		   		</p:panel>
 		   		<h:panelGroup id="listPanel">

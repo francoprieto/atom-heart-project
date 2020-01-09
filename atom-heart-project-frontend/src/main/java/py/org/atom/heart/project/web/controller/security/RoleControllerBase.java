@@ -22,8 +22,8 @@ public abstract class RoleControllerBase<T extends SystemRole, V extends RoleSer
 		this.addFilter(new FilterField("Id " + this.labels.get("from"), "o.id", FilterField.GE, java.lang.Long.class, "id"));
 		this.addFilter(new FilterField("Id " + this.labels.get("to"), "o.id", FilterField.LE, java.lang.Long.class, "id"));
 		FilterField ff = new FilterField(this.labels.get("disabled"), "o.disableDate",FilterField.IS, java.lang.String.class,"disableDate");
-		ff.addOption(new SelectItem("NULL",this.labels.get("yes")));
-		ff.addOption(new SelectItem("NOT NULL",this.labels.get("no")));
+		ff.addOption(new SelectItem("NOT NULL",this.labels.get("yes")));
+		ff.addOption(new SelectItem("NULL",this.labels.get("no")));
 		this.addFilter(ff);
 		this.addListField(new ListField("Id","id","id",true));
 		this.addListField(new ListField(this.labels.get("disabled"),"disableDate","disableDate",true));
