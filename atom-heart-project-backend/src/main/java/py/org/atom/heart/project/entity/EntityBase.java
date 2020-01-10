@@ -12,14 +12,20 @@ public abstract class EntityBase extends BackendBase{
 	public static final String UPDATE_DATE="update_date";
 	public static final String DISABLE_USER="disable_user";
 	public static final String DISABLE_DATE="disable_date";
-	
 	@Transient
 	private boolean selected;
-
+	@Transient
+	protected String currentUser;
 	public boolean isSelected() {
 		return selected;
 	}
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+	public String getCurrentUser() {
+		return currentUser;
+	}
+	public void setCurrentUser(String currentUser) {
+		this.currentUser = currentUser;
 	}
 }

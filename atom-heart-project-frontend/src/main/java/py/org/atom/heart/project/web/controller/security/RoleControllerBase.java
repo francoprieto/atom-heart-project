@@ -1,13 +1,16 @@
 package py.org.atom.heart.project.web.controller.security;
 
+import java.util.List;
+
 import javax.faces.model.SelectItem;
 
+import py.org.atom.heart.project.entity.security.SystemFeature;
 import py.org.atom.heart.project.entity.security.SystemRole;
+import py.org.atom.heart.project.service.security.FeatureServiceBase;
 import py.org.atom.heart.project.service.security.RoleServiceBase;
 import py.org.atom.heart.project.web.controller.ControllerBase;
 import py.org.atom.heart.project.web.controller.FilterField;
 import py.org.atom.heart.project.web.controller.ListField;
-import py.org.atom.heart.project.web.controller.ViewField;
 
 /*
 @Named("name")
@@ -16,8 +19,12 @@ import py.org.atom.heart.project.web.controller.ViewField;
 @SuppressWarnings("rawtypes")
 public abstract class RoleControllerBase<T extends SystemRole, V extends RoleServiceBase<T>> extends ControllerBase<T, V>{
 
+	protected FeatureServiceBase<SystemFeature> fs; 
+	
+	protected List allFeatures;
+	protected Class featureClazz;
+	
 	protected abstract T newInstance();
-
 	public void init() {
 		this.addFilter(new FilterField("Id " + this.labels.get("from"), "o.id", FilterField.GE, java.lang.Long.class, "id"));
 		this.addFilter(new FilterField("Id " + this.labels.get("to"), "o.id", FilterField.LE, java.lang.Long.class, "id"));
@@ -27,47 +34,22 @@ public abstract class RoleControllerBase<T extends SystemRole, V extends RoleSer
 		this.addFilter(ff);
 		this.addListField(new ListField("Id","id","id",true));
 		this.addListField(new ListField(this.labels.get("disabled"),"disableDate","disableDate",true));
-		
-		this.addViewField(this.labels.get("role-tab"), new ViewField("Id","id"));
+		this.loadAllFeatures();
 	}
-
-	@Override
-	public void searchAction() {
-		this.search();
+	protected void loadAllFeatures() {
+		this.allFeatures = this.fs.getList("Select o From " + this.featureClazz.getCanonicalName() + " o ", null, 0, 999999999);
 	}
-
-	@Override
-	public void viewAction() {
-	
+	public abstract void searchAction();
+	public abstract void viewAction();
+	public abstract void clearAction();
+	public abstract void removeAction();
+	public abstract void editAction();
+	public abstract void newAction();
+	public abstract void updateAction();
+	public List getAllFeatures() {
+		return allFeatures;
 	}
-
-	@Override
-	public void clearAction() {
-		this.clear();
+	public void setAllFeatures(List allFeatures) {
+		this.allFeatures = allFeatures;
 	}
-
-	@Override
-	public void removeAction() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void editAction() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void newAction() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void updateAction() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @MappedSuperclass
 public class InsertUpdateDisableBase extends InsertUpdateBase{
@@ -15,6 +16,8 @@ public class InsertUpdateDisableBase extends InsertUpdateBase{
 	@Column(name=DISABLE_DATE)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date disableDate;
+	@Transient
+	private boolean enabled;
 	public String getDisableUser() {
 		return disableUser;
 	}
@@ -26,6 +29,19 @@ public class InsertUpdateDisableBase extends InsertUpdateBase{
 	}
 	public void setDisableDate(Date disableDate) {
 		this.disableDate = disableDate;
+	}
+	public boolean isEnabled() {
+		if(this.disableDate != null) this.enabled = false; else this.enabled = true;
+		return enabled;
+	}
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		if(!this.enabled) {
+			this.disableDate = new Date();
+			this.disableUser = this.currentUser;
+		}else {
+			this.disableDate = null;
+			this.disableUser = null;
+		}
 	}		
-	
 }

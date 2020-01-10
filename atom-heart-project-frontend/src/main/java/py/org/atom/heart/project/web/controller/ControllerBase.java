@@ -20,8 +20,8 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	
 	@Inject
     protected Conversation conversation;
-	private String screen = Constants.LIST;
-	private T instance;
+	protected String screen = Constants.LIST;
+	protected T instance;
 	private List<FilterField> filters = new ArrayList<FilterField>();
 	private List<ListField> listFields = new ArrayList<ListField>();
 	private List<FormField> formFields = new ArrayList<FormField>();
@@ -58,13 +58,19 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 		this.dataList = new LazyModelBase<T>(sb, this.baseQuery, this.baseCount, filters, sort);
 	}
 	protected void clear() {
-		this.dataList = null;
-		this.filters = new ArrayList<FilterField>();
-		this.listFields = new ArrayList<ListField>();
-		this.formFields = new ArrayList<FormField>();
-		this.viewFields = new LinkedHashMap<String,List<ViewField>>();
-		this.sort = new LinkedHashMap<String,Boolean>();
-		init();
+		if(this.screen.trim().equals(Constants.LIST)) {
+			this.dataList = null;
+			this.filters = new ArrayList<FilterField>();
+			this.listFields = new ArrayList<ListField>();
+			this.formFields = new ArrayList<FormField>();
+			this.viewFields = new LinkedHashMap<String,List<ViewField>>();
+			this.sort = new LinkedHashMap<String,Boolean>();
+			init();
+		}
+		if(this.screen.trim().equals(Constants.FORM) || this.screen.trim().equals(Constants.VIEW)) {
+			this.instance = null;
+			this.screen = Constants.LIST;
+		}
 	}
 	public void addSortAction() {
 		String key = this.sortKey;

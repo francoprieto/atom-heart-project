@@ -15,6 +15,7 @@ public class DataBase extends FrontendBase{
 	protected BigDecimal bigDecimalValue;
 	protected Double doubleValue;
 	protected Character charValue;
+	protected Boolean booleanValue;
 	protected Date dateValue;
 	@SuppressWarnings("rawtypes")
 	public Class getType() {
@@ -65,6 +66,12 @@ public class DataBase extends FrontendBase{
 	}
 	public void setDateValue(Date dateValue) {
 		this.dateValue = dateValue;
+	}	
+	public Boolean getBooleanValue() {
+		return booleanValue;
+	}
+	public void setBooleanValue(Boolean booleanValue) {
+		this.booleanValue = booleanValue;
 	}
 	public Object getValue() {
 		if(this.stringValue != null && this.stringValue.trim().length() <= 0) this.stringValue = null;
@@ -75,6 +82,7 @@ public class DataBase extends FrontendBase{
 		else if(this.type == Double.class) return this.doubleValue;
 		else if(this.type == Character.class) return this.charValue;
 		else if(this.type == Date.class) return this.dateValue;
+		else if(this.type == Boolean.class) return this.booleanValue;
 		return null;
 	}
 }

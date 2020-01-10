@@ -22,6 +22,7 @@
     	<cc:attribute name="path" required="true" shortDescription="Path screen"/>
     	<cc:attribute name="sortKey" shortDescription="Field to be sorted by"/>
     	<cc:attribute name="labels" shortDescription="A Map for all Labels"/>
+    	<cc:attribute name="form" shortDescription="Path of the form page"/>
     	<!-- Bean attribute parameters -->
     	<cc:attribute name="screen" required="true" shortDescription="Screen attribute"/>    	
     	<!-- Method parameters -->
@@ -47,12 +48,12 @@
     <cc:implementation>
 
     <span><h:outputText value="#{cc.attrs.path}" /></span>
-    <p:panel header="#{cc.attrs.title}" deferred="true" id="screen">
+    <p:panel header="#{cc.attrs.title}">
 	<!--Screen starts here -->
-    	<h:panelGroup id="wrapper">
+    	<p:outputPanel deferred="true" id="screen">
     		
 			<!-- List fragment starts here -->
-	    	<h:form id="list-form" rendered="#{cc.attrs.screen == 'L'}">
+	    	<h:form id="list-form" rendered="#{cc.attrs.screen == 'L'}" prependId="false">
 	    		<p:panel toggleable="true" collapsed="false" id="filterPanel" widgetVar="filterPanel">
 	    			<f:facet name="header"><h:outputText value="#{cc.attrs.labels['filterTitle']}" style="font-size:small"/></f:facet>
 		   			<p:panelGrid>
@@ -90,7 +91,7 @@
 		   			<f:facet name="footer">
 		   				<p:commandButton icon="pi pi-search" value="#{empty cc.attrs.labels['search'] ? 'Search' : cc.attrs.labels['search']}" action="#{cc.attrs.searchMethod}" update=":msgs, listPanel" rendered="#{cc.attrs.canSearch}"/>
 		   				<p:commandButton icon="pi pi-times" value="#{empty cc.attrs.labels['clear'] ? 'Clear' : cc.attrs.labels['clear']}" action="#{cc.attrs.clearMethod}" update=":msgs, listPanel, filterPanel" rendered="#{cc.attrs.canSearch}"/>
-		   				<p:commandButton icon="pi pi-file-o" value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newMethod}" update=":msgs" rendered="#{cc.attrs.canCreate}"/>
+		   				<p:commandButton icon="pi pi-file" value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newMethod}" update=":msgs, :cc:screen" rendered="#{cc.attrs.canCreate}"/>
 		   			</f:facet>
 		   		</p:panel>
 		   		<h:panelGroup id="listPanel">
@@ -134,13 +135,25 @@
 		   		</h:panelGroup>
 	    	</h:form>
 			<!-- List fragment ends here -->
+
+			<!-- Form fragment starts here -->
+			<h:form id="form-form" rendered="#{cc.attrs.screen == 'F'}">
+				<p:panel header="#{cc.attrs.labels['new']}">
+					<ui:include src="#{cc.attrs.form}" />
+					<f:facet name="footer">
+						<p:commandButton icon="pi pi-angle-double-left" value="#{cc.attrs.labels['cancel']}" action="#{cc.attrs.clearMethod}" immediate="true" update=":msgs, :cc:screen"/>
+						<p:commandButton icon="pi pi-save" value="#{cc.attrs.labels['save']}" action="#{cc.attrs.saveMethod}" update=":cc:screen, :msgs"/>
+					</f:facet>
+				</p:panel>
+			</h:form>
+			<!-- Form fragment ends here -->
 		
 			<!-- View fragment starts here -->
 			<h:form id="view-form" rendered="#{cc.attrs.screen == 'V'}">
 				
 			</h:form>
-			<!-- View fragment stops here -->
-    	</h:panelGroup>
+			<!-- View fragment ends here -->
+    	</p:outputPanel>
 	<!--End of screen -->
     </p:panel>
     </cc:implementation>

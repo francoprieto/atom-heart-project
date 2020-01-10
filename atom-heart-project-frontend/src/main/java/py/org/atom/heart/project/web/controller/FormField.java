@@ -19,37 +19,43 @@ public class FormField extends DataBase implements Serializable{
 		this.stringValue = value;
 		this.type = String.class;
 	}	
-	public FormField(String label, String key, String operator, Integer value) {
+	public FormField(String label, String key, Integer value) {
 		this.label = label;
 		this.key = key;
 		this.integerValue = value;
 		this.type = Integer.class;
 	}
-	public FormField(String label, String key, String operator, Long value) {
+	public FormField(String label, String key, Long value) {
 		this.label = label;
 		this.key = key;
 		this.longValue = value;
 		this.type = Long.class;
 	}	
-	public FormField(String label, String key, String operator, Double value) {
+	public FormField(String label, String key, Double value) {
 		this.label = label;
 		this.key = key;
 		this.doubleValue = value;
 		this.type = Double.class;
 	}
-	public FormField(String label, String key, String operator, BigDecimal value) {
+	public FormField(String label, String key, BigDecimal value) {
 		this.label = label;
 		this.key = key;
 		this.bigDecimalValue = value;
 		this.type = BigDecimal.class;
 	}
-	public FormField(String label, String key, String operator, Character value) {
+	public FormField(String label, String key, Character value) {
 		this.label = label;
 		this.key = key;
 		this.charValue = value;
 		this.type = Character.class;
 	}
-	public FormField(String label, String key, String operator, Date value) {
+	public FormField(String label, String key, Boolean value) {
+		this.label = label;
+		this.key = key;
+		this.booleanValue = value;
+		this.type = Boolean.class;
+	}	
+	public FormField(String label, String key, Date value) {
 		this.label = label;
 		this.key = key;
 		this.dateValue = value;
