@@ -9,6 +9,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 
 import py.org.atom.heart.project.entity.InsertBase;
+import py.org.atom.heart.project.util.PersistenceUtil;
 
 @MappedSuperclass
 public class SystemProfileRole<T extends SystemProfile,V extends SystemRole> extends InsertBase{
@@ -41,7 +42,7 @@ public class SystemProfileRole<T extends SystemProfile,V extends SystemRole> ext
 	}
 	@PrePersist
 	public void prePersist() {
-		this.id = (new Date()).getTime();
+		this.id = PersistenceUtil.getLongId();
 		this.setInsertDate(new Date());
 	}	
 }

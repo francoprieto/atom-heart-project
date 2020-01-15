@@ -3,6 +3,7 @@ package py.org.atom.heart.project.entity.security;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,10 +21,11 @@ public class SystemUser<T extends SystemUserRole,V extends SystemProfile> extend
 	private int su;
 	@Column(name="password")
 	private String password;
-	@OneToMany(mappedBy = "role")
-	private Set<T> userRoles;	
+	@OneToMany(fetch=FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+	private Set<T> userRoles;
 	@ManyToOne
-    @JoinColumn(name = "profile_id")	
+    @JoinColumn(name="profile_id")	
 	private V profile;
 	@Transient
 	public boolean isActive() {

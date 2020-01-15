@@ -3,7 +3,9 @@ package py.org.atom.heart.project.entity.security;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 
@@ -12,10 +14,11 @@ import py.org.atom.heart.project.entity.EntityBase;
 @MappedSuperclass
 public class SystemFeature<T extends SystemRoleFeature> extends EntityBase{
 	@Id
-	private String id;
+	protected String id;
 	@Column(name="description")
 	private String description;
-	@OneToMany(mappedBy = "feature")
+	@OneToMany(fetch=FetchType.LAZY)
+	@JoinColumn(name = "feature_id")
 	private Set<T> roleFeatures;		
 	public String getId() {
 		return id;

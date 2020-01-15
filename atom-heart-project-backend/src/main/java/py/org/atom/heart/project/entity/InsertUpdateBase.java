@@ -9,8 +9,6 @@ import javax.persistence.TemporalType;
 
 @MappedSuperclass
 public class InsertUpdateBase extends InsertBase{
-	
-
 	@Column(name=UPDATE_USER)
 	private String updateUser;
 	@Column(name=UPDATE_DATE)
@@ -29,5 +27,7 @@ public class InsertUpdateBase extends InsertBase{
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
-	
+    public void preUpdate() {
+        this.updateDate = new Date();
+    }	
 }

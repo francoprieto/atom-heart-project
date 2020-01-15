@@ -2,7 +2,9 @@ package py.org.atom.heart.project.entity.security;
 
 import java.util.Set;
 
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -13,9 +15,11 @@ import py.org.atom.heart.project.entity.InsertUpdateDisableBase;
 public class SystemProfile<T extends SystemUser,V extends SystemProfileRole> extends InsertUpdateDisableBase{
 	@Id
 	private String id;
-	@OneToMany(mappedBy = "profile")
+	@OneToMany(fetch=FetchType.LAZY)
+    @JoinColumn(name = "profile_id")
 	private Set<T> users;
-	@OneToMany(mappedBy = "profile")
+	@OneToMany(fetch=FetchType.LAZY)
+    @JoinColumn(name = "profile_id")
 	private Set<V> profileRoles;
 	@Transient
 	public boolean isActive() {

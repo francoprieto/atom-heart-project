@@ -13,6 +13,8 @@ public abstract class EntityBase extends BackendBase{
 	public static final String DISABLE_USER="disable_user";
 	public static final String DISABLE_DATE="disable_date";
 	@Transient
+	private boolean fresh = true;
+	@Transient
 	private boolean selected;
 	@Transient
 	protected String currentUser;
@@ -28,4 +30,10 @@ public abstract class EntityBase extends BackendBase{
 	public void setCurrentUser(String currentUser) {
 		this.currentUser = currentUser;
 	}
+	public boolean isFresh() {
+		return fresh;
+	}
+	public void setFresh(boolean fresh) {
+		this.fresh = fresh;
+	}	
 }

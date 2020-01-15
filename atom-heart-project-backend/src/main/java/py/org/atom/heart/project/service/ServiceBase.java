@@ -2,9 +2,11 @@ package py.org.atom.heart.project.service;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
@@ -105,4 +107,26 @@ public class ServiceBase<T> extends BackendBase {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public T fetchGraph(Object id, @SuppressWarnings("rawtypes") Class c, String graphName) {
+		if(id == null || graphName == null || c == null) return null;
+		@SuppressWarnings("rawtypes")
+		EntityGraph entityGraph = this.em.getEntityGraph(graphName);
+		Map<String, Object> properties = new HashMap<String,Object>();
+		properties.put("javax.persistence.fetchgraph", entityGraph);
+		Object out = this.em.find(c, id, properties);
+		if(out == null) return null;
+		return (T) out;
+	}	
+	public T fetchGraph(Object id, @SuppressWarnings("rawtypes") Class c, String graphName, String attributeNodes) {
+		if(id == null || graphName == null || c == null) return null;
+		@SuppressWarnings("rawtypes")
+		EntityGraph entityGraph = this.em.getEntityGraph(graphName);
+		if(attributeNodes != null && attributeNodes.trim().length() > 0) entityGraph.addAttributeNodes(attributeNodes);
+		Map<String, Object> properties = new HashMap<String,Object>();
+		properties.put("javax.persistence.fetchgraph", entityGraph);
+		Object out = this.em.find(c, id, properties);
+		if(out == null) return null;
+		return (T) out;
+	}
 }

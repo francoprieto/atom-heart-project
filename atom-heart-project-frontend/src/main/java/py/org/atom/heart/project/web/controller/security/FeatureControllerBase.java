@@ -30,8 +30,4 @@ public abstract class FeatureControllerBase<T extends SystemFeature, V extends F
 	public void clearAction() {
 		this.clear();
 	}
-	public abstract void removeAction();
-	public abstract void editAction();
-	public abstract void newAction();
-	public abstract void updateAction();
 }

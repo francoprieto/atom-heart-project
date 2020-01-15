@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
+import javax.security.enterprise.SecurityContext;
 
 import org.primefaces.component.export.ExcelOptions;
 import org.primefaces.component.export.PDFOptions;
@@ -15,9 +16,11 @@ import org.primefaces.model.LazyDataModel;
 
 import py.org.atom.heart.project.FrontendBase;
 import py.org.atom.heart.project.service.ServiceBase;
+import py.org.atom.heart.project.service.ServiceException;
 
 public abstract class ControllerBase<T,V> extends FrontendBase{
-	
+	@Inject
+	protected SecurityContext securityContext;
 	@Inject
     protected Conversation conversation;
 	protected String screen = Constants.LIST;
@@ -44,12 +47,19 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	public abstract void editAction();
 	public abstract void newAction();
 	public abstract void updateAction();
+	public abstract void saveAction();
+	protected abstract boolean validateSave();
+	protected abstract boolean validateDelete();
+	protected abstract boolean validateUpdate();
     protected ExcelOptions xlsOpts;
     protected PDFOptions pdfOpts;	
 	protected Class clazz;
+	protected boolean saveAndStay = false;
+	protected boolean fresh = false;
 	public void start() {
 		if(this.conversation.isTransient())	this.conversation.begin();
 		if(this.conversation != null) this.conversation.setTimeout(10800000);
+		if(this.securityContext != null && this.securityContext.getCallerPrincipal() != null) this.user = this.securityContext.getCallerPrincipal().getName();
 	}	
 	protected void search() {
 		if(this.baseQuery.trim().equals(Constants.BASE_QUERY)) this.baseQuery = this.baseQuery.replace("[entity]", this.clazz == null ? "" : this.clazz.getCanonicalName());
@@ -71,6 +81,46 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 			this.instance = null;
 			this.screen = Constants.LIST;
 		}
+	}
+	protected void save() {
+		if(this.instance == null) return;
+		if(!this.validateSave()) return;
+		ServiceBase sb = (ServiceBase) this.service;
+		try {
+			sb.persist(this.instance);
+		} catch (ServiceException e) {
+			this.error(this.labels.get("saveError") + " " + e);
+			return;
+		}
+		this.info(this.labels.get("saveInfo"));
+		if(!this.saveAndStay) this.screen = Constants.LIST;
+	}
+
+	protected void update() {
+		if(this.instance == null) return;
+		if(!this.validateUpdate()) return;
+		ServiceBase sb = (ServiceBase) this.service;
+		try {
+			sb.update(this.instance);
+		} catch (ServiceException e) {
+			this.error(this.labels.get("updateError") + " " + e);
+			return;
+		}
+		this.info(this.labels.get("updateInfo"));
+		if(!this.saveAndStay) this.screen = Constants.LIST;		
+	}
+	protected void remove() {
+		if(this.instance == null) return;
+		if(!this.validateUpdate()) return;
+		ServiceBase sb = (ServiceBase) this.service;
+		try {
+			sb.remove(this.instance);
+		} catch (ServiceException e) {
+			this.error(this.labels.get("deleteError") + " " + e);
+			return;
+		}
+		this.info(this.labels.get("deleteInfo"));
+		this.screen = Constants.LIST;		
 	}
 	public void addSortAction() {
 		String key = this.sortKey;
@@ -223,5 +273,11 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	}
 	public void setLabels(Map<String, String> labels) {
 		this.labels = labels;
+	}
+	public boolean isFresh() {
+		return fresh;
+	}
+	public void setFresh(boolean fresh) {
+		this.fresh = fresh;
 	}
 }
