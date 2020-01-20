@@ -122,7 +122,7 @@
 				        </p:column>				        
 				        <p:column headerText="#" style="width:calc(20px)" exportable="false"><h:outputText value="#{idx +1}" style="font-size : x-small;"/></p:column>
 	        			<core:forEach items="#{cc.attrs.dataListFields}" var="c">
-					    	<p:column style="width:calc(100px)" >
+					    	<p:column style="width:calc(100px)" headerText="#{c.title}">
 						    	<f:facet name="header">
 									<h:outputText value="#{c.title}" rendered="#{!c.sort}" style="font-size : small;"/>
 						            <p:commandLink value="#{c.title}" action="#{cc.attrs.addSort}" style="font-size : small;" title="#{c.title}" rendered="#{c.sort}" oncomplete="updateFooter()">
@@ -135,9 +135,9 @@
 						<f:facet name="footer">
 							<h:panelGroup id="sortPanel">
 				       			<core:forEach items="#{cc.attrs.sortList}" var="o" >
-				       				<p:commandLink action="#{cc.attrs.remSort}" value="#{o.key} #{o.value ? ' asc ' : ' desc '}" title="-" oncomplete="updateFooter()" style="font-size : small;">
+				       				<p:commandLink action="#{cc.attrs.remSort}" value=" [#{o.key} #{o.value ? ' asc ' : ' desc '}] " title="-" oncomplete="updateFooter()" style="font-size : small;">
 				       					<f:setPropertyActionListener target="#{cc.attrs.sortKey}" value="#{o.key}" />
-				       				</p:commandLink>#{' - '}
+				       				</p:commandLink>
 				       			</core:forEach>								
 							</h:panelGroup>
 						</f:facet>

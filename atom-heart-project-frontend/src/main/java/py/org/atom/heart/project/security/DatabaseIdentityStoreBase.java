@@ -2,6 +2,7 @@ package py.org.atom.heart.project.security;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +13,8 @@ import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
 import javax.security.enterprise.identitystore.PasswordHash;
+
+import org.glassfish.soteria.identitystores.hash.Pbkdf2PasswordHashImpl;
 
 import py.org.atom.heart.project.FrontendBase;
 import py.org.atom.heart.project.entity.security.SystemFeature;
@@ -32,6 +35,18 @@ public class DatabaseIdentityStoreBase<T extends ServiceBase> extends FrontendBa
     @Inject
     protected PasswordHash passwordHash;
     
+    public static String encode(String in) {
+    	if(in == null) return null;
+    	PasswordHash passwordHash = new Pbkdf2PasswordHashImpl();
+        Map<String, String> parameters = new HashMap<String,String>();
+        parameters.put("Pbkdf2PasswordHash.Iterations", "3072");
+        parameters.put("Pbkdf2PasswordHash.Algorithm", "PBKDF2WithHmacSHA512");
+        parameters.put("Pbkdf2PasswordHash.SaltSizeBytes", "64");
+        passwordHash.initialize(parameters);
+        String generated = passwordHash.generate(in.toCharArray());   
+        return generated;
+    }
+    
     public CredentialValidationResult validate(Credential credential) {
     	String username = null;
     	SystemUser u = null;
@@ -50,8 +65,6 @@ public class DatabaseIdentityStoreBase<T extends ServiceBase> extends FrontendBa
             parameters.put("Pbkdf2PasswordHash.Algorithm", "PBKDF2WithHmacSHA512");
             parameters.put("Pbkdf2PasswordHash.SaltSizeBytes", "64");
             passwordHash.initialize(parameters);
-            String adminPwd = passwordHash.generate("admin".toCharArray());
-            String generated = passwordHash.generate(password.toCharArray());
             if(!passwordHash.verify(password.toCharArray(), u.getPassword())) 
             	return CredentialValidationResult.INVALID_RESULT;
         }
@@ -63,55 +76,35 @@ public class DatabaseIdentityStoreBase<T extends ServiceBase> extends FrontendBa
         }    		
         roles = this.getFeatures(u); 
         roles.add("USER");
-        if (credential instanceof CallerOnlyCredential) {
+        if (credential instanceof UsernamePasswordCredential) {
             if(u != null) return new CredentialValidationResult(u.getId(),roles);
             else return CredentialValidationResult.INVALID_RESULT;
         }
         return CredentialValidationResult.NOT_VALIDATED_RESULT;
     }
+    
     protected Set<String> getFeatures(SystemUser u){
     	Set<String> sfs = null;
+    	List objs = null;
     	if(u.getProfile() != null) {
     		SystemProfile p = (SystemProfile) u.getProfile();
-    		if(p.getProfileRoles() != null) {
-    			Set<SystemProfileRole> prs = (Set<SystemProfileRole>) p.getProfileRoles();
-    			Set<SystemRole> rs = null;
-    			for(SystemProfileRole pr : prs) {
-    				if(pr.getRole() != null && ((SystemRole) pr.getRole()).getDisableDate() == null) {
-	    				if(rs == null) rs = new HashSet<SystemRole>();
-	    				rs.add(pr.getRole());
-    				}
-    			}
-    			sfs = this.getFeatures(rs);
+    		String sql = null;
+    		if(p.getProfileRoles() != null)
+    			sql = "Select f From " + this.userClazz.getCanonicalName() 
+    				+ " u Inner Join u.profile p Inner Join p.profileRoles pr Inner Join pr.role r Inner Join r.roleFeatures rf Inner Join rf.feature f "
+    				+ " Where u.id = :id and p.disableDate is null and r.disableDate is null";
+    		else
+    			sql = "Select f From " + this.userClazz.getCanonicalName() 
+					+ " u Inner Join u.userRoles ur Inner Join ur.role r Inner Join r.roleFeatures rf Inner Join rf.feature f "
+					+ " Where u.id = :id and r.disableDate is null";
+    		Map<String,Object> parms = new HashMap<String,Object>();
+    		parms.put("id",u.getId());
+    		objs = this.userService.getList(sql, parms, 0, 999999999);
+    		for(Object o : objs) {
+    			SystemFeature sf = (SystemFeature) o;
+    			if(sfs == null) sfs = new HashSet<String>();
+    			if(!sfs.contains(sf.getId())) sfs.add(sf.getId());
     		}
-    	}else {
-	    	if(u.getUserRoles() == null) return null;
-	    	Set<SystemUserRole> urs = u.getUserRoles();
-	    	if(urs == null) return null;
-	    	Set<SystemRole> rs = null;
-	    	for(SystemUserRole ur : urs) {
-	    		if(ur.getRole() != null && ((SystemRole) ur.getRole()).getDisableDate() == null) {
-    				if(rs == null) rs = new HashSet<SystemRole>();
-    				rs.add(ur.getRole());
-	    		}
-	    	}
-	    	sfs = this.getFeatures(rs);
-    	}
-    	return sfs;
-    }
-    protected Set<String> getFeatures(Set<SystemRole> rs){
-    	if(rs == null || rs.size() <= 0) return null;
-    	Set<String> sfs = null;
-    	for(SystemRole r : rs) {
-			Set<SystemRoleFeature> rfs = r.getRoleFeatures();
-			if(rfs != null) {
-				for(SystemRoleFeature rf : rfs) {
-					if(rf.getFeature() != null) {
-						if(sfs == null) sfs = new HashSet<String>();
-						sfs.add(((SystemFeature)rf.getFeature()).getId());
-					}
-				}
-			}
     	}
     	return sfs;
     }

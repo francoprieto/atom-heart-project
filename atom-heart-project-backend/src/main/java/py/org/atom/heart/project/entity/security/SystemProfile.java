@@ -14,13 +14,13 @@ import py.org.atom.heart.project.entity.InsertUpdateDisableBase;
 @MappedSuperclass
 public class SystemProfile<T extends SystemUser,V extends SystemProfileRole> extends InsertUpdateDisableBase{
 	@Id
-	private String id;
+	protected String id;
 	@OneToMany(fetch=FetchType.LAZY)
     @JoinColumn(name = "profile_id")
-	private Set<T> users;
+	protected Set<T> users;
 	@OneToMany(fetch=FetchType.LAZY)
     @JoinColumn(name = "profile_id")
-	private Set<V> profileRoles;
+	protected Set<V> profileRoles;
 	@Transient
 	public boolean isActive() {
 		if(this.getDisableDate() != null) return false; else return true;

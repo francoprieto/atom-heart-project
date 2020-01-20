@@ -28,9 +28,13 @@ public class SystemUser<T extends SystemUserRole,V extends SystemProfile> extend
     @JoinColumn(name="profile_id")	
 	private V profile;
 	@Transient
+	private String genPassword;
+	@Transient
 	public boolean isActive() {
 		if(this.getDisableDate() != null) return false; else return true;
 	}
+	@Transient
+	private boolean superUser;
 	public String getId() {
 		return id;
 	}
@@ -60,5 +64,19 @@ public class SystemUser<T extends SystemUserRole,V extends SystemProfile> extend
 	}
 	public void setPassword(String password) {
 		this.password = password;
-	}		
+	}
+	public boolean isSuperUser() {
+		if(this.su == 1) this.superUser = true; else this.superUser = false;
+		return superUser;
+	}
+	public void setSuperUser(boolean superUser) {
+		if(superUser) this.su = 1; else this.su = 0;
+		this.superUser = superUser;
+	}
+	public String getGenPassword() {
+		return genPassword;
+	}
+	public void setGenPassword(String genPassword) {
+		this.genPassword = genPassword;
+	}	
 }

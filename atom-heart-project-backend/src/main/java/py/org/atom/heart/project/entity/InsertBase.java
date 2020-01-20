@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 @MappedSuperclass
@@ -25,6 +26,7 @@ public class InsertBase extends EntityBase{
 	public void setInsertDate(Date insertDate) {
 		this.insertDate = insertDate;
 	}
+	@PrePersist
 	public void prePersist() {
 		this.insertDate = new Date();
 	}
