@@ -1,5 +1,7 @@
 package py.org.atom.heart.project.web.controller;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -7,7 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.Conversation;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
 import javax.security.enterprise.SecurityContext;
 
 import org.primefaces.component.export.ExcelOptions;
@@ -17,6 +23,7 @@ import org.primefaces.model.LazyDataModel;
 import py.org.atom.heart.project.FrontendBase;
 import py.org.atom.heart.project.service.ServiceBase;
 import py.org.atom.heart.project.service.ServiceException;
+import py.org.atom.heart.project.web.annotation.Feature;
 
 public abstract class ControllerBase<T,V> extends FrontendBase{
 	@Inject
@@ -28,7 +35,6 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	private List<FilterField> filters = new ArrayList<FilterField>();
 	private List<ListField> listFields = new ArrayList<ListField>();
 	private List<FormField> formFields = new ArrayList<FormField>();
-	protected Map<String,String> labels = new HashMap<String,String>();
 	private Map<String,List<ViewField>> viewFields = new LinkedHashMap<String,List<ViewField>>();
 	private LinkedHashMap<String, Boolean> sort = new LinkedHashMap<String,Boolean>(); 
 	private String sortKey;
@@ -268,16 +274,31 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	public void setPdfOpts(PDFOptions pdfOpts) {
 		this.pdfOpts = pdfOpts;
 	}
-	public Map<String, String> getLabels() {
-		return labels;
-	}
-	public void setLabels(Map<String, String> labels) {
-		this.labels = labels;
-	}
 	public boolean isFresh() {
 		return fresh;
 	}
 	public void setFresh(boolean fresh) {
 		this.fresh = fresh;
 	}
+	@AroundInvoke
+    public Object intercept(InvocationContext context) throws Exception {
+		ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();		
+		if(ctx.isUserInRole("SU")) return context.proceed();
+		Method m = context.getMethod();
+		if(m != null) {
+			Annotation[] feats = m.getAnnotationsByType(Feature.class);
+			if(feats != null && feats.length > 0) {
+				Feature feat = (Feature) feats[0];
+				if(feat != null) {
+					String feature = feat.name();
+					if(!ctx.isUserInRole(feature)) {
+						this.warn(this.labels.get("privilegesError"));
+						return null;
+					}else
+						return context.proceed();
+				}
+			}
+		}
+        return context.proceed();
+    }	
 }

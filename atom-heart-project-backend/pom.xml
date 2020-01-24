@@ -5,7 +5,7 @@
 	<groupId>py.org.atom.heart.project.backend</groupId>
 	<artifactId>atom-heart-project-backend</artifactId>
 	<version>2.0</version>
-	<name>The Atom Heart Mother Backend Libary</name>
+	<name>The Atom Heart Project Backend Libary</name>
 	<dependencies>
 		<dependency>
 			<groupId>javax.persistence</groupId>

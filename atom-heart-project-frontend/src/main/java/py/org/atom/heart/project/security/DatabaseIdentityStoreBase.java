@@ -75,7 +75,7 @@ public class DatabaseIdentityStoreBase<T extends ServiceBase> extends FrontendBa
         	return new CredentialValidationResult(u.getId(),su);
         }    		
         roles = this.getFeatures(u); 
-        roles.add("USER");
+        if(roles != null) roles.add("USER");
         if (credential instanceof UsernamePasswordCredential) {
             if(u != null) return new CredentialValidationResult(u.getId(),roles);
             else return CredentialValidationResult.INVALID_RESULT;
@@ -86,26 +86,26 @@ public class DatabaseIdentityStoreBase<T extends ServiceBase> extends FrontendBa
     protected Set<String> getFeatures(SystemUser u){
     	Set<String> sfs = null;
     	List objs = null;
+    	String sql = null;
     	if(u.getProfile() != null) {
     		SystemProfile p = (SystemProfile) u.getProfile();
-    		String sql = null;
     		if(p.getProfileRoles() != null)
     			sql = "Select f From " + this.userClazz.getCanonicalName() 
     				+ " u Inner Join u.profile p Inner Join p.profileRoles pr Inner Join pr.role r Inner Join r.roleFeatures rf Inner Join rf.feature f "
-    				+ " Where u.id = :id and p.disableDate is null and r.disableDate is null";
-    		else
+    				+ " Where u.id = :id and p.disableDate is null and r.disableDate is null and f.inactive = 0";
+    	} else
     			sql = "Select f From " + this.userClazz.getCanonicalName() 
 					+ " u Inner Join u.userRoles ur Inner Join ur.role r Inner Join r.roleFeatures rf Inner Join rf.feature f "
-					+ " Where u.id = :id and r.disableDate is null";
-    		Map<String,Object> parms = new HashMap<String,Object>();
-    		parms.put("id",u.getId());
-    		objs = this.userService.getList(sql, parms, 0, 999999999);
-    		for(Object o : objs) {
-    			SystemFeature sf = (SystemFeature) o;
-    			if(sfs == null) sfs = new HashSet<String>();
-    			if(!sfs.contains(sf.getId())) sfs.add(sf.getId());
-    		}
-    	}
+					+ " Where u.id = :id and r.disableDate is null and f.inactive = 0";
+    	Map<String,Object> parms = new HashMap<String,Object>();
+    	parms.put("id",u.getId());
+    	objs = this.userService.getList(sql, parms, 0, 999999999);
+    	for(Object o : objs) {
+			SystemFeature sf = (SystemFeature) o;
+			if(sfs == null) sfs = new HashSet<String>();
+			if(!sfs.contains(sf.getId())) sfs.add(sf.getId());
+		}
+    	
     	return sfs;
     }
 }

@@ -5,7 +5,7 @@
 	<groupId>py.org.atom.heart.project.frontend</groupId>
 	<artifactId>atom-heart-project-frontend</artifactId>
 	<version>2.0</version>
-	<name>The Atom Heart Mother Frontend Library</name>
+	<name>The Atom Heart Project Frontend Library</name>
 	<properties>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>

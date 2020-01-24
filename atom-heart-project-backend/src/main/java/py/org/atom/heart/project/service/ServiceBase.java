@@ -43,6 +43,19 @@ public class ServiceBase<T> extends BackendBase {
 		return out;
 	}	
 	
+	public void bulk(String hql, Map<String,Object> params) throws ServiceException{
+		if(hql == null || hql.trim().equals("") ) return;
+		try {
+			Query q = this.em.createQuery(hql);
+			if(params != null && params.size() > 0) {
+				for(String k : params.keySet()) q.setParameter(k, params.get(k));
+			}
+			q.executeUpdate();
+		}catch(Exception ex) {
+			throw new ServiceException(ex);
+		}
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public T getById(Class c, Object id) {
 		Object o = this.em.find(c, id);

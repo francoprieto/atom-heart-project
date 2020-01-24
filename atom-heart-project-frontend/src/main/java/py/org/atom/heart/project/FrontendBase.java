@@ -2,6 +2,8 @@ package py.org.atom.heart.project;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -10,6 +12,7 @@ import javax.faces.context.FacesContext;
 public class FrontendBase {
 
 	protected String user;
+	protected Map<String,String> labels = new HashMap<String,String>();
 	
 	protected void error(String msg) {
 		this.showMsg(FacesMessage.SEVERITY_ERROR, msg);
@@ -38,5 +41,10 @@ public class FrontendBase {
 		FacesMessage fm = new FacesMessage(s, type + (this.user == null ? "" : this.user + " ") + sdf.format(new Date()), msg);
 		FacesContext.getCurrentInstance().addMessage(null,fm);		
 	}		
-	
+	public Map<String, String> getLabels() {
+		return labels;
+	}
+	public void setLabels(Map<String, String> labels) {
+		this.labels = labels;
+	}	
 }
