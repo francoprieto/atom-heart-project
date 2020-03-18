@@ -18,7 +18,9 @@ import javax.security.enterprise.SecurityContext;
 
 import org.primefaces.component.export.ExcelOptions;
 import org.primefaces.component.export.PDFOptions;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.TreeNode;
 
 import py.org.atom.heart.project.FrontendBase;
 import py.org.atom.heart.project.service.ServiceBase;
@@ -36,12 +38,14 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	private List<ListField> listFields = new ArrayList<ListField>();
 	private List<FormField> formFields = new ArrayList<FormField>();
 	private Map<String,List<ViewField>> viewFields = new LinkedHashMap<String,List<ViewField>>();
-	private LinkedHashMap<String, Boolean> sort = new LinkedHashMap<String,Boolean>(); 
+	protected LinkedHashMap<String, Boolean> sort = new LinkedHashMap<String,Boolean>(); 
 	private String sortKey;
 	protected String user;
 	protected String baseQuery = Constants.BASE_QUERY;
 	protected String baseCount = Constants.BASE_COUNT;
-	private LazyDataModel<T> dataList = null;
+	private LazyDataModel<T> dataList = null; // For simpleCRUD
+	protected List simpleDataList = null;
+	protected TreeNode root; // For treeCRUD
 	private int pageSize=Constants.DATA_TABLE_DEFAULT_PAGE_SIZE;
 	protected V service; // The class that extends this shall inject the @EJB stateless
 	protected abstract T newInstance();
@@ -87,6 +91,14 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 			this.instance = null;
 			this.screen = Constants.LIST;
 		}
+	}
+	protected void view() {
+		if(this.instance == null) return;
+		this.screen = Constants.VIEW;	
+	}	
+	protected void edit() {
+		if(this.instance == null) return;
+		this.screen = Constants.FORM;
 	}
 	protected void save() {
 		if(this.instance == null) return;
@@ -157,17 +169,20 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	public String getScreen() {
 		return screen;
 	}
-
 	public void setScreen(String screen) {
 		this.screen = screen;
 	}
-	
 	public LazyDataModel<T> getDataList() {
 		return dataList;
 	}
-
 	public void setDataList(LazyDataModel<T> dataList) {
 		this.dataList = dataList;
+	}
+	public TreeNode getRoot() {
+		return root;
+	}
+	public void setRoot(TreeNode root) {
+		this.root = root;
 	}
 	protected void addFilter(FilterField o){
 		if(o == null) return;
@@ -279,6 +294,13 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	}
 	public void setFresh(boolean fresh) {
 		this.fresh = fresh;
+	}
+	
+	public List getSimpleDataList() {
+		return simpleDataList;
+	}
+	public void setSimpleDataList(List simpleDataList) {
+		this.simpleDataList = simpleDataList;
 	}
 	@AroundInvoke
     public Object intercept(InvocationContext context) throws Exception {

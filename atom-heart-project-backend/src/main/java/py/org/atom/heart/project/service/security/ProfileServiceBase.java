@@ -43,12 +43,12 @@ public class ProfileServiceBase<T extends SystemProfile> extends ServiceBase<T>{
 		}
 	}
 	
-	public void remove(T o, String featureClass, String profileRoleClass, Set profileRoles) throws ServiceException{
+	public void remove(T o, String profileClass, String profileRoleClass, Set profileRoles) throws ServiceException{
 		if(o == null) throw new ServiceException("Empty data");
 		try {
 			String id = ((SystemProfile) o).getId();
 			this.em.createQuery("Delete From " + profileRoleClass + " o Where o.profile.id = :id").setParameter("id", id).executeUpdate();
-			this.em.createQuery("Delete From " + featureClass + " o Where o.id = :id").setParameter("id", id).executeUpdate();
+			this.em.createQuery("Delete From " + profileClass + " o Where o.id = :id").setParameter("id", id).executeUpdate();
 			this.em.flush();
 		}catch(Exception ex) {
 			throw new ServiceException(ex);

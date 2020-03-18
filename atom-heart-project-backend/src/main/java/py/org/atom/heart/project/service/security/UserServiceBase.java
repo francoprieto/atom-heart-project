@@ -44,11 +44,11 @@ public class UserServiceBase<T extends SystemUser> extends ServiceBase<T> {
 			throw new ServiceException(ex);
 		}
 	}	
-	public void remove(T o, String userClass, String userRoleFeatureClass) throws ServiceException{
+	public void remove(T o, String userClass, String userRoleClass) throws ServiceException{
 		if(o == null) throw new ServiceException("Empty data");
 		try {
 			String id = ((SystemUser) o).getId();
-			this.em.createQuery("Delete From " + userRoleFeatureClass + " o Where o.role.id = :id").setParameter("id", id).executeUpdate();
+			this.em.createQuery("Delete From " + userRoleClass + " o Where o.user.id = :id").setParameter("id", id).executeUpdate();
 			this.em.createQuery("Delete From " + userClass + " o Where o.id = :id").setParameter("id", id).executeUpdate();
 			this.em.flush();
 		}catch(Exception ex) {

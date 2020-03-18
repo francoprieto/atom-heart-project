@@ -10,10 +10,10 @@ import javax.persistence.TemporalType;
 @MappedSuperclass
 public class InsertBase extends EntityBase{
 	@Column(name=INSERT_USER)
-	private String insertUser;
+	protected String insertUser;
 	@Column(name=INSERT_DATE)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date insertDate;
+	protected Date insertDate;
 	public String getInsertUser() {
 		return insertUser;
 	}

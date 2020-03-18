@@ -113,6 +113,7 @@ public class ServiceBase<T> extends BackendBase {
 	public void remove(T o) throws ServiceException{
 		if(o == null) throw new ServiceException("Empty data");
 		try {
+			o = this.em.merge(o);
 			this.em.remove(o);
 			this.em.flush();
 		}catch(Exception ex) {

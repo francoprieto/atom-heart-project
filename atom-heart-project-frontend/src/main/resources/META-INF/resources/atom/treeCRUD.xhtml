@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:core="http://java.sun.com/jsp/jstl/core"
+    xmlns:cc="http://java.sun.com/jsf/composite">
+    
+    <cc:interface>
+    
+		<!-- Boolean parameters -->
+    	<cc:attribute name="canSearch" required="true" shortDescription="Can query data"/>
+    	<cc:attribute name="canView" required="true" shortDescription="Can view details"/>
+    	<cc:attribute name="canCreate" required="true" shortDescription="Can create data"/>
+    	<cc:attribute name="canUpdate" required="true" shortDescription="Can update data"/>
+    	<cc:attribute name="canDelete" required="true" shortDescription="Can delete data"/>
+    	<cc:attribute name="canExport" shortDescription="Can export data"/>
+    	<cc:attribute name="fresh" shortDescription="Fresh means if instance is new or not"/>
+    	<!-- String parameters -->
+    	<cc:attribute name="title" required="true" shortDescription="Title of the screen"/>
+    	<cc:attribute name="path" required="true" shortDescription="Path screen"/>
+    	<cc:attribute name="labels" shortDescription="A Map for all Labels"/>
+    	<cc:attribute name="form" shortDescription="Path of the form page"/>
+    	<cc:attribute name="view" shortDescription="Path of the view page"/>
+    	<!-- Bean attribute parameters -->
+    	<cc:attribute name="screen" required="true" shortDescription="Screen attribute"/>    	
+    	<!-- Method parameters -->
+    	<cc:attribute name="viewMethod" method-signature="void viewMethod()" shortDescription="Method used to vew the properties of an instance" />
+		<cc:attribute name="searchMethod" method-signature="void searchMethod()" shortDescription="Method used to search data" />
+		<cc:attribute name="clearMethod" method-signature="void clearMethod()" shortDescription="Method used to clear the searched data" />
+		<cc:attribute name="newMethod" method-signature="void newMethod()" shortDescription="Method used to create a new instance" />
+		<cc:attribute name="newRoot" method-signature="void newRoot()" shortDescription="Method used to create a new root instance" />
+		<cc:attribute name="createMethod" method-signature="void createMethod()" shortDescription="Method used to persist a new instance" />
+		<cc:attribute name="editMethod" method-signature="void editMethod()" shortDescription="Method used to allow to modify an instance" />
+		<cc:attribute name="updateMethod" method-signature="void updateMethod()" shortDescription="Method used to persist a modified instance" />
+		<cc:attribute name="deleteMethod" method-signature="void deleteMethod()" shortDescription="Method used to delete an instance" />
+		<cc:attribute name="saveMethod" method-signature="void saveMethod()" shortDescription="Method used to save an instance" />
+		<!-- Complex object parameters -->
+		<cc:attribute name="instance" shortDescription="Instance" />
+		<cc:attribute name="filterList" required="true" shortDescription="List of filters" />
+		<cc:attribute name="treeListFields" required="true" shortDescription="List of fields presented in the data list" />
+		<cc:attribute name="treeList" required="true" shortDescription="List of instances" />
+		<cc:attribute name="simpleDataList" required="true" shortDescription="Simple List of instances" />		
+		<cc:attribute name="xlsOptions" shortDescription="Options for the Excel exporter" />
+		<cc:attribute name="pdfOptions" shortDescription="Options for the PDF exporter" />				
+    </cc:interface>
+    
+    <cc:implementation>
+
+    <span><h:outputText value="#{cc.attrs.path}" /></span>
+    <p:panel header="#{cc.attrs.title}" style="width : 100%">
+	<!--Screen starts here -->
+        <f:facet name="actions">
+        	<h:form id="exporters" prependId="false">
+	        	<div style="float:right; font-size : x-small;">
+	        		<h:commandLink value="XLS" rendered="#{cc.attrs.canExport}">
+	        			<p:dataExporter type="xls" target=":cc:dataTable" fileName="export" options="#{cc.attrs.xlsOptions}" />
+	        		</h:commandLink> - 
+	        		<h:commandLink value="PDF" rendered="#{cc.attrs.canExport}">
+	        			<p:dataExporter type="pdf" target=":cc:dataTable" fileName="export" options="#{cc.attrs.pdfOptions}" />
+	        		</h:commandLink>				        		
+	        	</div>
+	        </h:form>
+        </f:facet>	
+    	<p:outputPanel deferred="true" id="screen" style="width : 100%">
+    		
+			<!-- List fragment starts here -->
+	    	<h:form id="list-form" rendered="#{cc.attrs.screen == 'L'}" prependId="false">
+	    		<p:commandButton icon="pi pi-file" value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newRoot}" update=":msgs, :cc:screen" rendered="#{cc.attrs.canCreate}"/>
+		   		<br />
+		   		<h:panelGroup id="listPanel" style="width : 100%">
+		   			<p:treeTable value="#{cc.attrs.treeList}" var="row" id="treeTable">		   			
+		   				<core:forEach items="#{cc.attrs.treeListFields}" var="c">
+		   					<p:column style="width : #{c.size}%">
+		   						<f:facet name="header">
+									<h:outputText value="#{c.title}" style="font-size : small;"/>
+								</f:facet>
+		   						<p:commandLink style="text-decoration: none;" oncomplete="PF('opts').show('#{component.clientId}')">
+									<h:outputText value="#{row[c.property1]}" rendered="#{row[c.property1] != 'true' and row[c.property1] != 'false'}"/>
+									<h:outputText value="#{row[c.property1] == 'true' ? cc.attrs.labels['yes'] : cc.attrs.labels['no']}" rendered="#{row[c.property1] == 'true' or row[c.property1] == 'false'}"/>
+									<f:setPropertyActionListener target="#{cc.attrs.instance}" value="#{row}" />
+								</p:commandLink>
+							</p:column>
+						</core:forEach>								
+		   			</p:treeTable>
+		   			<p:dataTable value="#{cc.attrs.simpleDataList}" var="row" id="dataTable" style="display : none">
+		   				<core:forEach items="#{cc.attrs.treeListFields}" var="c">
+		   					<p:column style="width : #{c.size}%">
+		   						<f:facet name="header">
+									<h:outputText value="#{c.title}" style="font-size : small;"/>
+								</f:facet>
+		   						<p:commandLink style="text-decoration: none;" oncomplete="PF('opts').show('#{component.clientId}')">
+									<h:outputText value="#{row[c.property1]}" rendered="#{row[c.property1] != 'true' and row[c.property1] != 'false'}"/>
+									<h:outputText value="#{row[c.property1] == 'true' ? cc.attrs.labels['yes'] : cc.attrs.labels['no']}" rendered="#{row[c.property1] == 'true' or row[c.property1] == 'false'}"/>
+								</p:commandLink>
+							</p:column>
+						</core:forEach>		   				
+		   			</p:dataTable>
+				    <p:overlayPanel widgetVar="opts" showEffect="fade" hideEffect="fade" dismissable="true">
+				    	<p:menu>
+				    		<p:menuitem value="#{cc.attrs.labels['view']}" action="#{cc.attrs.viewMethod}" update=":msgs, :cc:screen" icon="pi pi-bars" style="font-size : small" rendered="#{cc.attrs.canView}"/>
+				    		<p:menuitem value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newMethod}" update=":msgs, :cc:screen" icon="pi pi-file" style="font-size : small" rendered="#{cc.attrs.canCreate}"/>
+				    		<p:menuitem value="#{cc.attrs.labels['edit']}" action="#{cc.attrs.editMethod}" update=":msgs, :cc:screen" icon="pi pi-pencil" style="font-size : small" rendered="#{cc.attrs.canUpdate}"/>
+				    		<p:menuitem value="#{cc.attrs.labels['delete']}" action="#{cc.attrs.deleteMethod}" update=":msgs, :cc:screen" icon="pi pi-trash" style="font-size : small" rendered="#{cc.attrs.canDelete}" onclick="if(!confirm('#{cc.attrs.labels['confirmDelete']}')) { return false; }"/>
+				    	</p:menu>
+				    </p:overlayPanel>
+		   		</h:panelGroup>
+	    	</h:form>
+			<!-- List fragment ends here -->
+
+			<!-- Form fragment starts here -->
+			<h:form id="form-form" rendered="#{cc.attrs.screen == 'F'}">
+				<p:panel header="#{cc.attrs.fresh ? cc.attrs.labels['new'] : cc.attrs.labels['update'] }">
+					<ui:include src="#{cc.attrs.form}" />
+					<f:facet name="footer">
+						<p:commandButton icon="pi pi-angle-double-left" value="#{cc.attrs.labels['cancel']}" action="#{cc.attrs.clearMethod}" immediate="true" update=":msgs, :cc:screen"/>
+						<p:commandButton icon="pi pi-save" value="#{cc.attrs.labels['save']}" action="#{cc.attrs.saveMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canCreate and cc.attrs.fresh}"/>
+						<p:commandButton icon="pi pi-save" value="#{cc.attrs.labels['update']}" action="#{cc.attrs.updateMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canUpdate and !cc.attrs.fresh}"/>
+					</f:facet>
+				</p:panel>
+			</h:form>
+			<!-- Form fragment ends here -->
+		
+			<!-- View fragment starts here -->
+			<h:form id="view-form" rendered="#{cc.attrs.screen == 'V'}">
+				<p:panel header="#{cc.attrs.labels['view']}">
+					<ui:include src="#{cc.attrs.view}" />
+					<f:facet name="footer">
+						<p:commandButton icon="pi pi-angle-double-left" value="#{cc.attrs.labels['cancel']}" action="#{cc.attrs.clearMethod}" immediate="true" update=":msgs, :cc:screen"/>
+						<p:commandButton icon="pi pi-pencil" value="#{cc.attrs.labels['edit']}" action="#{cc.attrs.editMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canUpdate}"/>
+						<p:commandButton icon="pi pi-trash" value="#{cc.attrs.labels['delete']}" action="#{cc.attrs.deleteMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canDelete}" onclick="if(!confirm('#{cc.attrs.labels['confirmDelete']}')) { return false; }"/>
+					</f:facet>				
+				</p:panel>
+			</h:form>
+			<!-- View fragment ends here -->
+    	</p:outputPanel>
+	<!--End of screen -->
+    </p:panel>
+    </cc:implementation>
+</html>

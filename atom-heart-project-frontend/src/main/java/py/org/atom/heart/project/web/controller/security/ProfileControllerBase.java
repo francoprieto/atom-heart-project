@@ -59,11 +59,6 @@ public abstract class ProfileControllerBase<T extends SystemProfile, V extends P
 	protected void edit() {
 		if(this.instance == null) return;
 		this.screen = Constants.FORM;
-	}
-	
-	protected void view() {
-		if(this.instance == null) return;
-		this.screen = Constants.VIEW;	
 	}	
 	@Override
 	protected void save() {

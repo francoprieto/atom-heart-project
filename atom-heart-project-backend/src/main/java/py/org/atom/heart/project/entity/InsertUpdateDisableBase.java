@@ -12,10 +12,10 @@ import javax.persistence.Transient;
 public class InsertUpdateDisableBase extends InsertUpdateBase{
 	
 	@Column(name=DISABLE_USER)
-	private String disableUser;
+	protected String disableUser;
 	@Column(name=DISABLE_DATE)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date disableDate;
+	protected Date disableDate;
 	@Transient
 	private boolean enabled;
 	public String getDisableUser() {

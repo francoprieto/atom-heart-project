@@ -11,11 +11,10 @@ import javax.persistence.TemporalType;
 @MappedSuperclass
 public class InsertUpdateBase extends InsertBase{
 	@Column(name=UPDATE_USER)
-	private String updateUser;
+	protected String updateUser;
 	@Column(name=UPDATE_DATE)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date updateDate;
-	
+	protected Date updateDate;
 	public String getUpdateUser() {
 		return updateUser;
 	}

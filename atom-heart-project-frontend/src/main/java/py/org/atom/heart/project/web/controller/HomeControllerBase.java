@@ -55,7 +55,7 @@ public class HomeControllerBase extends ControllerBase {
 				if(!isParent) {
 					DefaultMenuItem item = new DefaultMenuItem(sm.getTitle());
 					item.setAjax(false);
-					item.setUrl(this.ctx.getApplicationContextPath() + "/" + sm.getUrl());
+					item.setUrl(this.ctx.getApplicationContextPath() + sm.getUrl());
 					if(this.ctx.isUserInRole("SU") || this.ctx.isUserInRole(sm.getId() + "." + this.accessPrefix))
 						parent.addElement(item);
 				}else {

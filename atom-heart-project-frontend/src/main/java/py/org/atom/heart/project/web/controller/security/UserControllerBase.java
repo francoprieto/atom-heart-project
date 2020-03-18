@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.faces.model.SelectItem;
 
+import py.org.atom.heart.project.entity.security.SystemRole;
 import py.org.atom.heart.project.entity.security.SystemUser;
 import py.org.atom.heart.project.service.ServiceException;
 import py.org.atom.heart.project.service.security.RoleServiceBase;
@@ -107,4 +108,20 @@ public abstract class UserControllerBase<T extends SystemUser, V extends UserSer
 		this.info(this.labels.get("saveInfo"));
 		if(!this.saveAndStay) this.screen = Constants.LIST;
 	}	
+
+	@Override
+	protected void remove() {
+		if(this.instance == null) return;
+		if(!this.validateDelete()) return;
+		UserServiceBase sb = (UserServiceBase) this.service;
+		try {
+			sb.remove(this.instance, clazz.getCanonicalName(), userRoleClazz.getCanonicalName());
+		} catch (ServiceException e) {
+			this.error(this.labels.get("deleteError") + " " + e);
+			return;
+		}
+		this.info(this.labels.get("deleteInfo"));
+		if(!this.saveAndStay) this.screen = Constants.LIST;
+	}	
+	
 }
