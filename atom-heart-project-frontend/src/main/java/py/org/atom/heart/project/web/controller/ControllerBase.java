@@ -69,7 +69,8 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	public void start() {
 		if(this.conversation.isTransient())	this.conversation.begin();
 		if(this.conversation != null) this.conversation.setTimeout(10800000);
-		if(this.securityContext != null && this.securityContext.getCallerPrincipal() != null) this.user = this.securityContext.getCallerPrincipal().getName();
+		if(this.securityContext != null && this.securityContext.getCallerPrincipal() != null) 
+			this.user = this.securityContext.getCallerPrincipal().getName();
 	}	
 	protected void search() {
 		if(this.baseQuery.trim().equals(Constants.BASE_QUERY)) this.baseQuery = this.baseQuery.replace("[entity]", this.clazz == null ? "" : this.clazz.getCanonicalName());
@@ -129,7 +130,7 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	}
 	protected void remove() {
 		if(this.instance == null) return;
-		if(!this.validateUpdate()) return;
+		if(!this.validateDelete()) return;
 		ServiceBase sb = (ServiceBase) this.service;
 		try {
 			sb.remove(this.instance);
