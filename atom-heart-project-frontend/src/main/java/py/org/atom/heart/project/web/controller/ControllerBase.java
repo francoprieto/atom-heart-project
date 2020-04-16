@@ -296,7 +296,6 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	public void setFresh(boolean fresh) {
 		this.fresh = fresh;
 	}
-	
 	public List getSimpleDataList() {
 		return simpleDataList;
 	}

@@ -71,7 +71,7 @@
 	    		<p:commandButton icon="pi pi-file" value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newRoot}" update=":msgs, :cc:screen" rendered="#{cc.attrs.canCreate}"/>
 		   		<br />
 		   		<h:panelGroup id="listPanel" style="width : 100%">
-		   			<p:treeTable value="#{cc.attrs.treeList}" var="row" id="treeTable">		   			
+		   			<p:treeTable value="#{cc.attrs.treeList}" var="row" id="treeTable" scrollable="true" scrollHeight="400">		   			
 		   				<core:forEach items="#{cc.attrs.treeListFields}" var="c">
 		   					<p:column style="width : #{c.size}%">
 		   						<f:facet name="header">

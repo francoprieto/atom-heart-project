@@ -43,7 +43,7 @@ public abstract class BootstrapBase<T extends ServiceBase, V extends ServiceBase
 	protected abstract Object newFeature(); // The class that extends this shall implement this method
 	protected abstract Object newMenu(); // The class that extends this shall implement this method
 	
-	private List<Object> loadFeatures(List<Object> newFeatures, List<Class> subTypes){
+	protected List<Object> loadFeatures(List<Object> newFeatures, List<Class> subTypes){
 		if(newFeatures == null) newFeatures = new ArrayList<Object>();
 		for(@SuppressWarnings("rawtypes") Class st : subTypes){
 			for(Method m : st.getMethods()) {
@@ -63,7 +63,7 @@ public abstract class BootstrapBase<T extends ServiceBase, V extends ServiceBase
 		}
 		return newFeatures;
 	}
-	private List<Object> loadMenus(List<Object> newMenus, List<Class> subTypes){
+	protected List<Object> loadMenus(List<Object> newMenus, List<Class> subTypes){
 		for(@SuppressWarnings("rawtypes") Class st : subTypes){
     		@SuppressWarnings("unchecked")
 			Annotation[] annotations = st.getAnnotationsByType(MenuItem.class);
@@ -148,7 +148,7 @@ public abstract class BootstrapBase<T extends ServiceBase, V extends ServiceBase
 			}
 		}
 	}
-	private SystemMenu getParent(SystemMenu sm) throws Exception{
+	protected SystemMenu getParent(SystemMenu sm) throws Exception{
 		if(sm == null) return null;
 		if(sm.getParent() == null) return null;
 		SystemMenu parent = (SystemMenu) this.menuService.getById(this.menuClass, sm.getParent());
