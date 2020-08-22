@@ -2,6 +2,7 @@ package py.org.atom.heart.project.web.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -92,5 +93,20 @@ public class FilterField extends DataBase implements Serializable{
 		if(o == null) return;
 		this.options.add(o);
 	}
-	
+	public void convertDate(boolean first) {
+		if(this.dateValue == null) return;
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(this.dateValue);
+		if(first) {
+			cal.set(Calendar.HOUR, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 1);
+		}else{
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);			
+		}
+		this.dateValue = cal.getTime();
+	}
 }

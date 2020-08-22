@@ -86,7 +86,8 @@ public class LazyModelBase<T> extends LazyDataModel<T>{
 				if(ff.getOperator().trim().equals(FilterField.IS) && ff.getOptions() != null && ff.getOptions().size() > 0) w += ff.getStringValue();
 			}
 		}
-		if(w.trim().length() > 0) w = " Where " + w;
+		if(w.trim().length() > 0 && !q.toLowerCase().contains("where")) w = " Where " + w;
+		else if(w.trim().length() > 0 && q.toLowerCase().contains("where")) w = " and " + w;
 		String o = "";
 		for(String k : this.sort.keySet()) {
 			if(o.trim().length() > 0) o += ", ";

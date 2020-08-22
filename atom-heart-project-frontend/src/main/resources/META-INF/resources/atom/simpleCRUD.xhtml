@@ -93,10 +93,10 @@
 						</p:repeat>			
 		   			</p:panelGrid>
 		   			<f:facet name="footer">
-		   				<p:commandButton icon="pi pi-search" value="#{empty cc.attrs.labels['search'] ? 'Search' : cc.attrs.labels['search']}" action="#{cc.attrs.searchMethod}" update=":msgs, listPanel" rendered="#{cc.attrs.canSearch}" oncomplete="PF('filterPanel').collapse()"/>
-		   				<p:commandButton icon="pi pi-times" value="#{empty cc.attrs.labels['clear'] ? 'Clear' : cc.attrs.labels['clear']}" action="#{cc.attrs.clearMethod}" update=":msgs, listPanel, filterPanel" rendered="#{cc.attrs.canSearch}"/>
-		   				<p:commandButton icon="pi pi-file" value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newMethod}" update=":msgs, :cc:screen" rendered="#{cc.attrs.canCreate}"/>
-		   				<p:commandButton icon="pi pi-filter" value="#{empty cc.attrs.labels['filterTitle'] ? 'Filters' : cc.attrs.labels['filterTitle']}" onclick="PF('filterPanel').toggle()" style="float: right"/>
+		   				<p:commandButton id="btnSearch" icon="pi pi-search" value="#{empty cc.attrs.labels['search'] ? 'Search' : cc.attrs.labels['search']}" action="#{cc.attrs.searchMethod}" update=":msgs, listPanel" rendered="#{cc.attrs.canSearch}" oncomplete="PF('filterPanel').collapse()"/>
+		   				<p:commandButton id="btnClear" icon="pi pi-times" value="#{empty cc.attrs.labels['clear'] ? 'Clear' : cc.attrs.labels['clear']}" action="#{cc.attrs.clearMethod}" update=":msgs, listPanel, filterPanel" rendered="#{cc.attrs.canSearch}"/>
+		   				<p:commandButton id="btnNew" icon="pi pi-file" value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newMethod}" update=":msgs, :cc:screen" rendered="#{cc.attrs.canCreate}"/>
+		   				<p:commandButton id="btnFilter" icon="pi pi-filter" value="#{empty cc.attrs.labels['filterTitle'] ? 'Filters' : cc.attrs.labels['filterTitle']}" onclick="PF('filterPanel').toggle()" style="float: right"/>
 		   			</f:facet>
 		   		</p:panel>
 		   		<h:panelGroup id="listPanel">
@@ -159,9 +159,9 @@
 				<p:panel header="#{cc.attrs.fresh ? cc.attrs.labels['new'] : cc.attrs.labels['update'] }">
 					<ui:include src="#{cc.attrs.form}" />
 					<f:facet name="footer">
-						<p:commandButton icon="pi pi-angle-double-left" value="#{cc.attrs.labels['cancel']}" action="#{cc.attrs.clearMethod}" immediate="true" update=":msgs, :cc:screen"/>
-						<p:commandButton icon="pi pi-save" value="#{cc.attrs.labels['save']}" action="#{cc.attrs.saveMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canCreate and cc.attrs.fresh}"/>
-						<p:commandButton icon="pi pi-save" value="#{cc.attrs.labels['update']}" action="#{cc.attrs.updateMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canUpdate and !cc.attrs.fresh}"/>
+						<p:commandButton id="btnCancelF" icon="pi pi-angle-double-left" value="#{cc.attrs.labels['cancel']}" action="#{cc.attrs.clearMethod}" immediate="true" update=":msgs, :cc:screen"/>
+						<p:commandButton id="btnSaveN" icon="pi pi-save" value="#{cc.attrs.labels['save']}" action="#{cc.attrs.saveMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canCreate and cc.attrs.fresh}"/>
+						<p:commandButton id="btnSaveU" icon="pi pi-save" value="#{cc.attrs.labels['update']}" action="#{cc.attrs.updateMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canUpdate and !cc.attrs.fresh}"/>
 					</f:facet>
 				</p:panel>
 			</h:form>
@@ -172,9 +172,9 @@
 				<p:panel header="#{cc.attrs.labels['view']}">
 					<ui:include src="#{cc.attrs.view}" />
 					<f:facet name="footer">
-						<p:commandButton icon="pi pi-angle-double-left" value="#{cc.attrs.labels['cancel']}" action="#{cc.attrs.clearMethod}" immediate="true" update=":msgs, :cc:screen"/>
-						<p:commandButton icon="pi pi-pencil" value="#{cc.attrs.labels['edit']}" action="#{cc.attrs.editMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canUpdate}"/>
-						<p:commandButton icon="pi pi-trash" value="#{cc.attrs.labels['delete']}" action="#{cc.attrs.deleteMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canDelete}" onclick="if(!confirm('#{cc.attrs.labels['confirmDelete']}')) { return false; }"/>
+						<p:commandButton id="btnCancelV" icon="pi pi-angle-double-left" value="#{cc.attrs.labels['cancel']}" action="#{cc.attrs.clearMethod}" immediate="true" update=":msgs, :cc:screen"/>
+						<p:commandButton id="btnEditV" icon="pi pi-pencil" value="#{cc.attrs.labels['edit']}" action="#{cc.attrs.editMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canUpdate}"/>
+						<p:commandButton id="btnDeleteV" icon="pi pi-trash" value="#{cc.attrs.labels['delete']}" action="#{cc.attrs.deleteMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canDelete}" onclick="if(!confirm('#{cc.attrs.labels['confirmDelete']}')) { return false; }"/>
 					</f:facet>				
 				</p:panel>
 			</h:form>

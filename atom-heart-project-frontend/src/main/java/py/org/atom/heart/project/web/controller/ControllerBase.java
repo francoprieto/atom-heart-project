@@ -15,6 +15,8 @@ import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 import javax.security.enterprise.SecurityContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.primefaces.component.export.ExcelOptions;
 import org.primefaces.component.export.PDFOptions;
@@ -322,5 +324,11 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 			}
 		}
         return context.proceed();
-    }	
+    }
+	protected Object getSessionAttr(String key) {
+		if(key == null) return null;
+		ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
+		HttpSession ses = (HttpSession) ((HttpServletRequest)ctx.getRequest()).getSession();
+		return ses.getAttribute(key);
+	}
 }

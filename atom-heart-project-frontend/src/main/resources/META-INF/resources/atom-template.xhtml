@@ -55,18 +55,18 @@
 				}
 	    		ui-corner-all{width : 200px; border : none; overflow : hidden;}
 				.sidenav {
-				  width: 150px;
+				  width: 170px;
 				  height: 100%
 				  position: fixed;
 				  z-index: 1;
-				  top: 55px;
+				  top: 75px;
 				  left: 0px;
 				  overflow-x: hidden;
 				  padding: 6px 0;
 				}
 				.main {
-				  margin-left: 155px; 
-				  top: 55px;
+				  margin-left: 170px; 
+				  top: 75px;
 				  font-size: small;
 				  padding: 0px 10px;
 				  position: fixed;
@@ -75,12 +75,15 @@
 				  overflow-y: auto;
 				}
 				@media screen and (max-height: 450px) {
-				  .sidenav {padding-top: 15px;}
+				  .sidenav {padding-top: 5px;}
 				  .sidenav a {font-size: 18px;}
 				}	    
 				.ui-growl {
 					top: 3em !important;
 					right: 1em !important;
+				}
+				.ui-selectonemenu-filter-container {
+    				width: 98% !important;
 				}		
 			</style>
         </h:head>
@@ -100,6 +103,7 @@
 			        </p:column>
 			    </p:panelGrid>
 			</h:form>
+			<ui:insert name="ext"></ui:insert>
 			<div class="sidenav">
 				<ui:insert name="menu" />
 			</div>		
