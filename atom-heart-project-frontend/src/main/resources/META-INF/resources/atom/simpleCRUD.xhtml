@@ -129,8 +129,8 @@
 						            	<f:setPropertyActionListener target="#{cc.attrs.sortKey}" value="#{c.id}" />
 						            </p:commandLink>									
 						        </f:facet> 
-						        <h:outputText value="#{row[c.property1]}#{(empty row[c.property2]) ? '' : ' '}#{(empty row[c.property2]) ? '' : row[c.property2]}#{(empty row[c.property3]) ? '' : ' '}#{(empty row[c.property3]) ? '' : row[c.property3]}" style="font-size : small; width: 100" title="#{c.title}" rendered="#{row[c.property1] != 'true' and row[c.property1] != 'false'}"/>
-						        <h:outputText value="#{row[c.property1] == 'true' ? cc.attrs.labels['yes'] : cc.attrs.labels['no']}" style="font-size : small; width: 100" title="#{c.title}" rendered="#{row[c.property1] == 'true' or row[c.property1] == 'false'}"/>
+						        <h:outputText value="#{row[c.property1]}#{(empty row[c.property2]) ? '' : ' '}#{(empty row[c.property2]) ? '' : row[c.property2]}#{(empty row[c.property3]) ? '' : ' '}#{(empty row[c.property3]) ? '' : row[c.property3]}" style="font-size : small; width: 100" title="#{c.title}" rendered="#{row[c.property1].toString() != 'true' and row[c.property1].toString() != 'false'}"/>
+						        <h:outputText value="#{row[c.property1].toString() == 'true' ? cc.attrs.labels['yes'] : cc.attrs.labels['no']}" style="font-size : small; width: 100" title="#{c.title}" rendered="#{row[c.property1].toString() == 'true' or row[c.property1].toString() == 'false'}"/>
 					        </p:column>
 						</core:forEach>
 						<f:facet name="footer">
