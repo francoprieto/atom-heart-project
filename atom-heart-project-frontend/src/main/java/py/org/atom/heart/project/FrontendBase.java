@@ -27,7 +27,7 @@ public class FrontendBase {
 		this.showMsg(FacesMessage.SEVERITY_FATAL, msg);
 	}	
 	protected void fatal(Exception ex) {
-		this.fatal(ex.getMessage());
+		this.fatal(ex.getLocalizedMessage());
 		ex.printStackTrace();
 	}
 	protected void showMsg(Severity s, String msg){

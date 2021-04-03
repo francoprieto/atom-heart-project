@@ -78,32 +78,19 @@
 									<h:outputText value="#{c.title}" style="font-size : small;"/>
 								</f:facet>
 		   						<p:commandLink style="text-decoration: none;" oncomplete="PF('opts').show('#{component.clientId}')">
-									<h:outputText value="#{row[c.property1]}" rendered="#{row[c.property1] != 'true' and row[c.property1] != 'false'}"/>
-									<h:outputText value="#{row[c.property1] == 'true' ? cc.attrs.labels['yes'] : cc.attrs.labels['no']}" rendered="#{row[c.property1] == 'true' or row[c.property1] == 'false'}"/>
+						        	<h:outputText value="#{row[c.property1]}#{(empty row[c.property2]) ? '' : ' '}#{(empty row[c.property2]) ? '' : row[c.property2]}#{(empty row[c.property3]) ? '' : ' '}#{(empty row[c.property3]) ? '' : row[c.property3]}" style="font-size : small; width: 100" title="#{c.title}" rendered="#{row[c.property1].toString() != 'true' and row[c.property1].toString() != 'false'}"/>
+						        	<h:outputText value="#{row[c.property1].toString() == 'true' ? cc.attrs.labels['yes'] : cc.attrs.labels['no']}" style="font-size : small; width: 100" title="#{c.title}" rendered="#{row[c.property1].toString() == 'true' or row[c.property1].toString() == 'false'}"/>
 									<f:setPropertyActionListener target="#{cc.attrs.instance}" value="#{row}" />
 								</p:commandLink>
 							</p:column>
 						</core:forEach>								
 		   			</p:treeTable>
-		   			<p:dataTable value="#{cc.attrs.simpleDataList}" var="row" id="dataTable" style="display : none">
-		   				<core:forEach items="#{cc.attrs.treeListFields}" var="c">
-		   					<p:column style="width : #{c.size}%">
-		   						<f:facet name="header">
-									<h:outputText value="#{c.title}" style="font-size : small;"/>
-								</f:facet>
-		   						<p:commandLink style="text-decoration: none;" oncomplete="PF('opts').show('#{component.clientId}')">
-									<h:outputText value="#{row[c.property1]}" rendered="#{row[c.property1] != 'true' and row[c.property1] != 'false'}"/>
-									<h:outputText value="#{row[c.property1] == 'true' ? cc.attrs.labels['yes'] : cc.attrs.labels['no']}" rendered="#{row[c.property1] == 'true' or row[c.property1] == 'false'}"/>
-								</p:commandLink>
-							</p:column>
-						</core:forEach>		   				
-		   			</p:dataTable>
 				    <p:overlayPanel widgetVar="opts" showEffect="fade" hideEffect="fade" dismissable="true">
 				    	<p:menu>
 				    		<p:menuitem value="#{cc.attrs.labels['view']}" action="#{cc.attrs.viewMethod}" update=":msgs, :cc:screen" icon="pi pi-bars" style="font-size : small" rendered="#{cc.attrs.canView}"/>
 				    		<p:menuitem value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newMethod}" update=":msgs, :cc:screen" icon="pi pi-file" style="font-size : small" rendered="#{cc.attrs.canCreate}"/>
 				    		<p:menuitem value="#{cc.attrs.labels['edit']}" action="#{cc.attrs.editMethod}" update=":msgs, :cc:screen" icon="pi pi-pencil" style="font-size : small" rendered="#{cc.attrs.canUpdate}"/>
-				    		<p:menuitem value="#{cc.attrs.labels['delete']}" action="#{cc.attrs.deleteMethod}" update=":msgs, :cc:screen" icon="pi pi-trash" style="font-size : small" rendered="#{cc.attrs.canDelete}" onclick="if(!confirm('#{cc.attrs.labels['confirmDelete']}')) { return false; }"/>
+				    		<p:menuitem value="#{cc.attrs.labels['delete']}" action="#{cc.attrs.deleteMethod}" update=":msgs, :cc:screen, treeTable" icon="pi pi-trash" style="font-size : small" rendered="#{cc.attrs.canDelete}" onclick="if(!confirm('#{cc.attrs.labels['confirmDelete']}')) { return false; }"/>
 				    	</p:menu>
 				    </p:overlayPanel>
 		   		</h:panelGroup>

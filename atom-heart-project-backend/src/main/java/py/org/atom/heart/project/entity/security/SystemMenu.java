@@ -16,7 +16,7 @@ public class SystemMenu extends EntityBase{
 	private String url;
 	@Column(name="title",nullable=false)
 	private String title;
-	@Column(name="_index",nullable=false)
+	@Column(name="index_",nullable=false)
 	private int index;
 	public String getId() {
 		return id;

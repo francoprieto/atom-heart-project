@@ -110,7 +110,7 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 		try {
 			sb.persist(this.instance);
 		} catch (ServiceException e) {
-			this.error(this.labels.get("saveError") + " " + e);
+			this.error(this.labels.get("saveError") + " " + e.getLocalizedMessage());
 			return;
 		}
 		this.info(this.labels.get("saveInfo"));

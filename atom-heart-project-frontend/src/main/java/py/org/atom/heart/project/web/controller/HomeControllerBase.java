@@ -32,7 +32,7 @@ public class HomeControllerBase extends ControllerBase {
 		if(this.mainMenu == null) this.mainMenu = new DefaultMenuModel();
 		for(Object o : this.menus) {
 			SystemMenu sm = (SystemMenu) o;
-			if(sm.getParent().trim().equals("")) {
+			if(sm.getParent() == null || sm.getParent().trim().equals("")) {
 				DefaultSubMenu parentMenu = new DefaultSubMenu(sm.getTitle());
 				parentMenu = this.loadChildren(parentMenu);
 				if(parentMenu.getElementsCount() > 0) this.mainMenu.addElement(parentMenu);
@@ -43,7 +43,7 @@ public class HomeControllerBase extends ControllerBase {
 		if(parent == null) return null;
 		for(Object o : this.menus) {
 			SystemMenu sm = (SystemMenu) o;
-			if(sm.getParent().trim().toLowerCase().equals(parent.getLabel().toLowerCase().trim())) {
+			if(sm.getParent() != null && sm.getParent().trim().toLowerCase().equals(parent.getLabel().toLowerCase().trim())) {
 				boolean isParent = false;
 				for(Object op : this.menus) {
 					SystemMenu psm = (SystemMenu) o;

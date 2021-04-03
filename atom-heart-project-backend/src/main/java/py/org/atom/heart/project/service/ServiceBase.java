@@ -51,6 +51,7 @@ public class ServiceBase<T> extends BackendBase {
 				for(String k : params.keySet()) q.setParameter(k, params.get(k));
 			}
 			q.executeUpdate();
+			this.em.flush();
 		}catch(Exception ex) {
 			throw new ServiceException(ex);
 		}
