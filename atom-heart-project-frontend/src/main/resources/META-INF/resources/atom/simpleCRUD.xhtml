@@ -70,7 +70,7 @@
 									<h:panelGroup>
 						    			<p:inputText value="#{filter.stringValue}" rendered="#{filter.type.canonicalName == 'java.lang.String' and (empty filter.options)}" size="#{filter.size}"/>
 						    			<p:inputNumber value="#{filter.integerValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.lang.Integer' and (empty filter.options)}" size="#{filter.size}"/>
-						    			<p:calendar value="#{filter.dateValue}" pattern="dd/MM/yyyy" mask="true" showOn="button" size="10" rendered="#{filter.type == 'java.util.Date' and (empty filter.options)}"/>
+						    			<p:calendar value="#{filter.dateValue}" pattern="dd/MM/yyyy" mask="true" showOn="button" size="10" rendered="#{filter.type.canonicalName == 'java.util.Date' and (empty filter.options)}"/>
 						    			<p:inputNumber value="#{filter.longValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.lang.Long' and (empty filter.options)}" size="#{filter.size}"/>
 						    			<p:inputNumber value="#{filter.bigDecimalValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.math.BigDecimal' and (empty filter.options)}" size="#{filter.size}"/>
 						    			<p:inputNumber value="#{filter.doubleValue}" decimalPlaces="2" rendered="#{filter.type.canonicalName == 'java.lang.Double' and (empty filter.options)}" size="#{filter.size}"/>
