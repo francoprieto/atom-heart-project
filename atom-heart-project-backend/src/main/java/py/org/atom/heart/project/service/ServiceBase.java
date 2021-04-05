@@ -24,7 +24,12 @@ public class ServiceBase<T> extends BackendBase {
 		if(query == null || parms == null) return null;
 		Query q = this.em.createQuery(query);
 		for(String key : parms.keySet()){
-			q.setParameter(key, parms.get(key));
+			String k = key;
+			if(k.contains("upper")) {
+				k = k.replace("upper(:", "");
+				k = k.replace(")", "");
+			}
+			q.setParameter(k, parms.get(key));
 		}
 		return (Long) q.getSingleResult();
 	} 
@@ -32,7 +37,14 @@ public class ServiceBase<T> extends BackendBase {
 	public List<T> getList(String query, Map<String,Object> parms, int page, int rowsXpage) {
 		Query q = this.em.createQuery(query);
 		if(parms != null) {
-			for(String k : parms.keySet()) q.setParameter(k, parms.get(k));
+			for(String key : parms.keySet()) {
+				String k = key;
+				if(k.contains("upper")) {
+					k = k.replace("upper(:", "");
+					k = k.replace(")", "");
+				}
+				q.setParameter(k, parms.get(key));
+			}
 		}
 		if(rowsXpage > 0){
 			q.setMaxResults(rowsXpage);

@@ -23,8 +23,9 @@ public class FilterField extends DataBase implements Serializable{
 	private String label;
 	private String key;
 	private String operator;
-	private String parmameter;
+	private String parameter;
 	private boolean required = false;
+	private boolean caseSensitive = false;
 	private Integer size;
 	private List<SelectItem> options = new ArrayList<SelectItem>();
 	
@@ -32,19 +33,23 @@ public class FilterField extends DataBase implements Serializable{
 	}
 	public FilterField(String label, String key, String operator, @SuppressWarnings("rawtypes") Class c, String parameter) {
 		this.label = label;
-		this.key = key;
 		this.operator = operator;
 		this.type = c;
 		this.required = false;
-		this.parmameter = parameter;
+		if(parameter != null && this.type == String.class && !this.caseSensitive && !parameter.contains("upper")) parameter = "upper(:" + parameter + ")";
+		this.parameter = parameter;
+		if(key != null && this.type == String.class && !this.caseSensitive && !key.contains("upper")) key = "upper(" + key + ")";
+		this.key = key;
 	}
 	public FilterField(String label, String key, String operator, @SuppressWarnings("rawtypes") Class c, boolean required, String parameter) {
 		this.label = label;
-		this.key = key;
 		this.operator = operator;
 		this.type = c;
 		this.required = required;
-		this.parmameter = parameter;
+		if(parameter != null && this.type == String.class && !this.caseSensitive && !parameter.contains("upper")) parameter = "upper(:" + parameter + ")";
+		this.parameter = parameter;
+		if(key != null && this.type == String.class && !this.caseSensitive && !key.contains("upper")) key = "upper(" + key + ")";
+		this.key = key;
 	}	
 	
 	public String getLabel() {
@@ -57,6 +62,7 @@ public class FilterField extends DataBase implements Serializable{
 		return key;
 	}
 	public void setKey(String key) {
+		if(key != null && this.type == String.class && !this.caseSensitive && !key.contains("upper")) key = "upper(" + key + ")";
 		this.key = key;
 	}
 	public String getOperator() {
@@ -83,15 +89,22 @@ public class FilterField extends DataBase implements Serializable{
 	public void setSize(Integer size) {
 		this.size = size;
 	}
-	public String getParmameter() {
-		return parmameter;
+	public String getParameter() {
+		return parameter;
 	}
-	public void setParmameter(String parmameter) {
-		this.parmameter = parmameter;
+	public void setParameter(String parameter) {
+		if(parameter != null && this.type == String.class && !this.caseSensitive && !parameter.contains("upper")) parameter = "upper(:" + parameter + ")";
+		this.parameter = parameter;
 	}
 	public void addOption(SelectItem o) {
 		if(o == null) return;
 		this.options.add(o);
+	}
+	public boolean isCaseSensitive() {
+		return caseSensitive;
+	}
+	public void setCaseSensitive(boolean caseSensitive) {
+		this.caseSensitive = caseSensitive;
 	}
 	public void convertDate(boolean first) {
 		if(this.dateValue == null) return;

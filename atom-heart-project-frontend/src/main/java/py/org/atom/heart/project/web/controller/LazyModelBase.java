@@ -78,11 +78,11 @@ public class LazyModelBase<T> extends LazyDataModel<T>{
 				if(!ff.getOperator().trim().equals(FilterField.IS_NOT_NULL)
 						&& !ff.getOperator().trim().equals(FilterField.IS_NULL)
 						&& !ff.getOperator().trim().equals(FilterField.IS)) { 
-					prms.put(ff.getParmameter(), ff.getValue());
+					prms.put(ff.getParameter(), ff.getValue());
 					par = true;
 				}
 				if(w.trim().length() > 0) w += " and ";
-				w += ff.getKey() + " " + ff.getOperator() + " " + (par ? ":" + ff.getParmameter() : "" );
+				w += ff.getKey() + " " + ff.getOperator() + " " + ((par) ? (!ff.getParameter().contains(":") ? ":" + ff.getParameter() : ff.getParameter()) : "" );
 				if(ff.getOperator().trim().equals(FilterField.IS) && ff.getOptions() != null && ff.getOptions().size() > 0) w += ff.getStringValue();
 			}
 		}
