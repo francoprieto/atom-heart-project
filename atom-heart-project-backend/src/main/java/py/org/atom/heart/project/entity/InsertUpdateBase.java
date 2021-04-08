@@ -28,6 +28,6 @@ public class InsertUpdateBase extends InsertBase{
 		this.updateDate = updateDate;
 	}
     public void preUpdate() {
-        this.updateDate = new Date();
+    	if(this.updateDate == null) this.updateDate = new Date();
     }	
 }

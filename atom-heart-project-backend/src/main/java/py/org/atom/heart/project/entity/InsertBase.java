@@ -28,6 +28,6 @@ public class InsertBase extends EntityBase{
 	}
 	@PrePersist
 	public void prePersist() {
-		this.insertDate = new Date();
+		if(this.insertDate == null) this.insertDate = new Date();
 	}
 }
