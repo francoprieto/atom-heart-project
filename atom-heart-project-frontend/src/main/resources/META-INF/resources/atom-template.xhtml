@@ -111,17 +111,28 @@
 				<ui:insert name="content"></ui:insert>
 			</div>		
 
-			<p:ajaxStatus style="position:fixed;left:50%;top:30%">
+			<p:ajaxStatus id="atom-as" widgetVar="atom-as" style="position:fixed;left:50%;top:30%">
 				<f:facet name="start">
 					<div style="background-color: #FFFFFF; border: 1px solid #333333; text-align: center; padding: 2px">
-						<p:graphicImage value="#{resource['atom:ajax-loader.gif']}" />
+						<i class="pi pi-spin pi-spinner" style="font-size: 2rem" />
 					</div>
 				</f:facet>
 				<f:facet name="complete">
 					<h:outputText value="" />
 				</f:facet>
 			</p:ajaxStatus>	
-						
+			<script type="text/javascript">
+		   // <![CDATA[			   
+				document.addEventListener("click", function(event){
+					var elem = event.target;
+					console.log(elem);
+					if((elem instanceof HTMLAnchorElement)||(elem instanceof HTMLButtonElement)){
+						var as = PF('atom-as');
+			    		as.trigger('start');
+					}
+				});
+				//]]>		
+			</script>
         </h:body>        
 	</f:view>
 </html>
