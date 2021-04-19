@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html 
+	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:core="http://java.sun.com/jsp/jstl/core"
+    xmlns:cc="http://java.sun.com/jsf/composite">
+    
+    <cc:interface>
+    
+		<!-- Boolean parameters -->
+    	<cc:attribute name="canSearch" required="true" shortDescription="Can query data"/>
+    	<cc:attribute name="canView" required="true" shortDescription="Can view details"/>
+    	<cc:attribute name="canCreate" required="true" shortDescription="Can create data"/>
+    	<cc:attribute name="canUpdate" required="true" shortDescription="Can update data"/>
+    	<cc:attribute name="canDelete" required="true" shortDescription="Can delete data"/>
+    	<cc:attribute name="canExport" shortDescription="Can export data"/>
+    	<cc:attribute name="fresh" shortDescription="Fresh means if instance is new or not"/>
+    	<!-- String parameters -->
+    	<cc:attribute name="title" required="true" shortDescription="Title of the screen"/>
+    	<cc:attribute name="path" required="true" shortDescription="Path screen"/>
+    	<cc:attribute name="sortKey" shortDescription="Field to be sorted by"/>
+    	<cc:attribute name="labels" shortDescription="A Map for all Labels"/>
+    	<cc:attribute name="form" shortDescription="Path of the form page"/>
+    	<cc:attribute name="view" shortDescription="Path of the view page"/>
+    	<!-- Bean attribute parameters -->
+    	<cc:attribute name="screen" required="true" shortDescription="Screen attribute"/>    	
+    	<!-- Method parameters -->
+    	<cc:attribute name="viewMethod" method-signature="void viewMethod()" shortDescription="Method used to vew the properties of an instance" />
+		<cc:attribute name="searchMethod" method-signature="void searchMethod()" shortDescription="Method used to search data" />
+		<cc:attribute name="clearMethod" method-signature="void clearMethod()" shortDescription="Method used to clear the searched data" />
+		<cc:attribute name="newMethod" method-signature="void newMethod()" shortDescription="Method used to create a new instance" />
+		<cc:attribute name="createMethod" method-signature="void createMethod()" shortDescription="Method used to persist a new instance" />
+		<cc:attribute name="editMethod" method-signature="void editMethod()" shortDescription="Method used to allow to modify an instance" />
+		<cc:attribute name="updateMethod" method-signature="void updateMethod()" shortDescription="Method used to persist a modified instance" />
+		<cc:attribute name="deleteMethod" method-signature="void deleteMethod()" shortDescription="Method used to delete an instance" />
+		<cc:attribute name="saveMethod" method-signature="void saveMethod()" shortDescription="Method used to save an instance" />
+		<cc:attribute name="addSort" method-signature="void addSort()" shortDescription="Method used to add sorting field"/>
+		<cc:attribute name="remSort" method-signature="void remSort()" shortDescription="Method used to remove sorting field"/>
+		<!-- Complex object parameters -->
+		<cc:attribute name="instance" shortDescription="Instance" />
+		<cc:attribute name="filterList" required="true" shortDescription="List of filters" />
+		<cc:attribute name="dataListFields" required="true" shortDescription="List of fields presented in the data list" />
+		<cc:attribute name="dataList" required="true" shortDescription="List of instances" />
+		<cc:attribute name="sortList" required="true" shortDescription="List of sort properties" />		
+		<cc:attribute name="xlsOptions" shortDescription="Options for the Excel exporter" />
+		<cc:attribute name="pdfOptions" shortDescription="Options for the PDF exporter" />				
+    </cc:interface>
+    
+    <cc:implementation>
+
+    <span><h:outputText value="#{cc.attrs.path}" /></span>
+    <p:panel header="#{cc.attrs.title}">
+	<!--Screen starts here -->
+    	<p:outputPanel deferred="true" id="screen">
+    		
+			<!-- List fragment starts here -->
+	    	<h:form id="list-form" rendered="#{cc.attrs.screen == 'L'}" prependId="false">
+	    		<p:panel toggleable="true" collapsed="true" id="filterPanel" widgetVar="filterPanel">
+	    			<f:facet name="header"><h:outputText value="#{cc.attrs.labels['filterTitle']}" style="font-size:small"/></f:facet>
+		   			<p:panelGrid>
+		   				<p:repeat var="filter" value="#{cc.attrs.filterList}">
+		   					<p:row>
+			        			<p:column>
+						    		<h:outputLabel value="#{filter.label}: " style="font-size:small"/>
+						    	</p:column>
+						    	<p:column>
+									<h:panelGroup>
+						    			<p:inputText value="#{filter.stringValue}" rendered="#{filter.type.canonicalName == 'java.lang.String' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:inputNumber value="#{filter.integerValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.lang.Integer' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:calendar value="#{filter.dateValue}" pattern="dd/MM/yyyy" mask="true" showOn="button" size="10" rendered="#{filter.type.canonicalName == 'java.util.Date' and (empty filter.options)}"/>
+						    			<p:inputNumber value="#{filter.longValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.lang.Long' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:inputNumber value="#{filter.bigDecimalValue}" decimalPlaces="0" rendered="#{filter.type.canonicalName == 'java.math.BigDecimal' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:inputNumber value="#{filter.doubleValue}" decimalPlaces="2" rendered="#{filter.type.canonicalName == 'java.lang.Double' and (empty filter.options)}" size="#{filter.size}"/>
+						    			<p:inputText value="#{filter.charValue}" rendered="#{filter.type.canonicalName == 'java.lang.Character' and (empty filter.options)}" size="#{filter.size}"/>
+										<p:selectOneMenu value="#{filter.stringValue}" rendered="#{(not empty filter.options) and filter.type.canonicalName == 'java.lang.String'}" >
+											<f:selectItem itemLabel="#{cc.attrs.labels['all']}" noSelectionOption="true"/>
+											<f:selectItems value="#{filter.options}"/>
+										</p:selectOneMenu>
+										<p:selectOneMenu value="#{filter.longValue}" rendered="#{(not empty filter.options) and filter.type.canonicalName == 'java.lang.Long'}">
+											<f:selectItem itemLabel="#{cc.attrs.labels['all']}" noSelectionOption="true"/>
+											<f:selectItems value="#{filter.options}"/>
+										</p:selectOneMenu>
+										<p:selectOneMenu value="#{filter.integerValue}" rendered="#{(not empty filter.options) and filter.type.canonicalName == 'java.lang.Integer'}">
+											<f:selectItem itemLabel="#{cc.attrs.labels['all']}" noSelectionOption="true"/>
+											<f:selectItems value="#{filter.options}"/>
+										</p:selectOneMenu>
+									</h:panelGroup>
+						    	</p:column>
+						    </p:row>
+						</p:repeat>			
+		   			</p:panelGrid>
+		   			<f:facet name="footer">
+		   				<p:commandButton id="btnSearch" icon="pi pi-search" value="#{empty cc.attrs.labels['search'] ? 'Search' : cc.attrs.labels['search']}" action="#{cc.attrs.searchMethod}" update=":msgs, listPanel" rendered="#{cc.attrs.canSearch}" oncomplete="PF('filterPanel').collapse()"/>
+		   				<p:commandButton id="btnClear" icon="pi pi-times" value="#{empty cc.attrs.labels['clear'] ? 'Clear' : cc.attrs.labels['clear']}" action="#{cc.attrs.clearMethod}" update=":msgs, listPanel, filterPanel" rendered="#{cc.attrs.canSearch}"/>
+		   				<p:commandButton id="btnNew" icon="pi pi-file" value="#{empty cc.attrs.labels['new'] ? 'New' : cc.attrs.labels['new']}" action="#{cc.attrs.newMethod}" update=":msgs, :cc:screen" rendered="#{cc.attrs.canCreate}"/>
+		   				<p:commandButton id="btnFilter" icon="pi pi-filter" value="#{empty cc.attrs.labels['filterTitle'] ? 'Filters' : cc.attrs.labels['filterTitle']}" onclick="PF('filterPanel').toggle()" style="float: right"/>
+		   			</f:facet>
+		   		</p:panel>
+		   		<h:panelGroup id="listPanel">
+		   			<p:remoteCommand name="updateFooter" update="dataTable"/>
+					<p:dataTable var="row" value="#{cc.attrs.dataList}" paginator="true" rows="10" rowIndexVar="idx" rowsPerPageTemplate="5,10,20,25,50,100"
+						currentPageReportTemplate="{currentPage}/{totalPages} ({totalRecords})" styleClass="ui-datatable-hor-scroll"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+				        id="dataTable" lazy="true" emptyMessage="#{''}" widgetVar="dataTable">
+				        <f:facet name="{Exporters}">
+				        	<div style="float:right; font-size : x-small;">
+				        		<h:commandLink value="XLS" rendered="#{cc.attrs.canExport}">
+				        			<p:dataExporter type="xls" target="dataTable" fileName="export" options="#{cc.attrs.xlsOptions}" />
+				        		</h:commandLink> - 
+				        		<h:commandLink value="PDF" rendered="#{cc.attrs.canExport}">
+				        			<p:dataExporter type="pdf" target="dataTable" fileName="export" options="#{cc.attrs.pdfOptions}" />
+				        		</h:commandLink>				        		
+				        	</div>
+				        </f:facet>
+				        <p:column style="width:calc(10px)" exportable="false" rendered="#{cc.attrs.canView or cc.attrs.canEdit or cc.attrs.canDelete}">
+				        	<p:commandLink styleClass="pi pi-ellipsis-v" oncomplete="PF('opts').show('#{component.clientId}')" style="text-decoration: none;">
+				        		<f:setPropertyActionListener target="#{cc.attrs.instance}" value="#{row}" />
+				        	</p:commandLink>
+				        </p:column>				        
+				        <p:column headerText="#" style="width:calc(20px)" exportable="false"><h:outputText value="#{idx +1}" style="font-size : x-small;"/></p:column>
+	        			<core:forEach items="#{cc.attrs.dataListFields}" var="c">
+					    	<p:column style="width:calc(100px)" headerText="#{c.title}">
+						    	<f:facet name="header">
+									<h:outputText value="#{c.title}" rendered="#{!c.sort}" style="font-size : small;"/>
+						            <p:commandLink value="#{c.title}" action="#{cc.attrs.addSort}" style="font-size : small;" title="#{c.title}" rendered="#{c.sort}" oncomplete="updateFooter()">
+						            	<f:setPropertyActionListener target="#{cc.attrs.sortKey}" value="#{c.id}" />
+						            </p:commandLink>									
+						        </f:facet> 
+						        <h:outputText value="#{row[c.property1]}#{(empty row[c.property2]) ? '' : ' '}#{(empty row[c.property2]) ? '' : row[c.property2]}#{(empty row[c.property3]) ? '' : ' '}#{(empty row[c.property3]) ? '' : row[c.property3]}" style="font-size : small; width: 100" title="#{c.title}" rendered="#{row[c.property1].toString() != 'true' and row[c.property1].toString() != 'false'}"/>
+						        <h:outputText value="#{row[c.property1].toString() == 'true' ? cc.attrs.labels['yes'] : cc.attrs.labels['no']}" style="font-size : small; width: 100" title="#{c.title}" rendered="#{row[c.property1].toString() == 'true' or row[c.property1].toString() == 'false'}"/>
+					        </p:column>
+						</core:forEach>
+						<f:facet name="footer">
+							<h:panelGroup id="sortPanel">
+				       			<core:forEach items="#{cc.attrs.sortList}" var="o" >
+				       				<p:commandLink action="#{cc.attrs.remSort}" value=" [#{o.key} #{o.value ? ' asc ' : ' desc '}] " title="-" oncomplete="updateFooter()" style="font-size : small;">
+				       					<f:setPropertyActionListener target="#{cc.attrs.sortKey}" value="#{o.key}" />
+				       				</p:commandLink>
+				       			</core:forEach>								
+							</h:panelGroup>
+						</f:facet>
+				    </p:dataTable>
+				    <p:overlayPanel widgetVar="opts" showEffect="fade" hideEffect="fade" dismissable="true">
+				    	<p:menu>
+				    		<p:menuitem value="#{cc.attrs.labels['view']}" action="#{cc.attrs.viewMethod}" update=":msgs, :cc:screen" icon="pi pi-bars" style="font-size : small" rendered="#{cc.attrs.canView}"/>
+				    		<p:menuitem value="#{cc.attrs.labels['edit']}" action="#{cc.attrs.editMethod}" update=":msgs, :cc:screen" icon="pi pi-pencil" style="font-size : small" rendered="#{cc.attrs.canUpdate}"/>
+				    		<p:menuitem value="#{cc.attrs.labels['delete']}" action="#{cc.attrs.deleteMethod}" update=":msgs, :cc:screen" icon="pi pi-trash" style="font-size : small" rendered="#{cc.attrs.canDelete}" onclick="if(!confirm('#{cc.attrs.labels['confirmDelete']}')) { return false; }"/>
+				    	</p:menu>
+				    </p:overlayPanel>
+		   		</h:panelGroup>
+	    	</h:form>
+			<!-- List fragment ends here -->
+
+			<!-- Form fragment starts here -->
+			<h:form id="form-form" rendered="#{cc.attrs.screen == 'F'}">
+				<p:panel header="#{cc.attrs.fresh ? cc.attrs.labels['new'] : cc.attrs.labels['update'] }">
+					<ui:include src="#{cc.attrs.form}" />
+					<f:facet name="footer">
+						<p:commandButton id="btnCancelF" icon="pi pi-angle-double-left" value="#{cc.attrs.labels['cancel']}" action="#{cc.attrs.clearMethod}" immediate="true" update=":msgs, :cc:screen"/>
+						<p:commandButton id="btnSaveN" icon="pi pi-save" value="#{cc.attrs.labels['save']}" action="#{cc.attrs.saveMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canCreate and cc.attrs.fresh}"/>
+						<p:commandButton id="btnSaveU" icon="pi pi-save" value="#{cc.attrs.labels['update']}" action="#{cc.attrs.updateMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canUpdate and !cc.attrs.fresh}"/>
+					</f:facet>
+				</p:panel>
+			</h:form>
+			<!-- Form fragment ends here -->
+		
+			<!-- View fragment starts here -->
+			<h:form id="view-form" rendered="#{cc.attrs.screen == 'V'}">
+				<p:panel header="#{cc.attrs.labels['view']}">
+					<ui:include src="#{cc.attrs.view}" />
+					<f:facet name="footer">
+						<p:commandButton id="btnCancelV" icon="pi pi-angle-double-left" value="#{cc.attrs.labels['cancel']}" action="#{cc.attrs.clearMethod}" immediate="true" update=":msgs, :cc:screen"/>
+						<p:commandButton id="btnEditV" icon="pi pi-pencil" value="#{cc.attrs.labels['edit']}" action="#{cc.attrs.editMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canUpdate}"/>
+						<p:commandButton id="btnDeleteV" icon="pi pi-trash" value="#{cc.attrs.labels['delete']}" action="#{cc.attrs.deleteMethod}" update=":cc:screen, :msgs" rendered="#{cc.attrs.canDelete}" onclick="if(!confirm('#{cc.attrs.labels['confirmDelete']}')) { return false; }"/>
+					</f:facet>				
+				</p:panel>
+			</h:form>
+			<!-- View fragment ends here -->
+    	</p:outputPanel>
+	<!--End of screen -->
+    </p:panel>
+    </cc:implementation>
+</html>

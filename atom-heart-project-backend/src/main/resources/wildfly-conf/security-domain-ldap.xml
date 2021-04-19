@@ -1,0 +1,19 @@
+<!-- https://docs.wildfly.org/16/WildFly_Elytron_Security.html#LDAP_Based_Authentication_Migration -->
+<security-domain name="atom-security-policy">
+	<authentication>
+		<login-module code="LdapExtended" flag="required">
+			<module-option name="java.naming.factory.initial" value="com.sun.jndi.ldap.LdapCtxFactory" />
+			<module-option name="java.naming.provider.url" value="ldap://{HOST}:{PORT}" />
+			<module-option name="java.naming.security.authentication" value="simple" />
+<!--             <module-option name="bindDN" value="uid=admin,ou=system"/> -->
+<!--             <module-option name="bindCredential" value="secret"/> -->
+			<module-option name="baseCtxDN" value="ou=users,dc=project,dc=heart,dc=atom,dc=org,dc=py"></module-option>
+			<module-option name="baseFilter" value="(uid={0})"></module-option>
+			<module-option name="roleAttributeID" value="uid"></module-option> 			
+		</login-module>
+		<login-module code="Database" flag="required">
+			<module-option name="dsJndiName" value="java:jboss/datasources/AtomDS" />
+			<module-option name="rolesQuery" value="select r.id from {role_table} r inner join {user_role_table} ur on ur.role_id = r.id where ur.user_id = ?" />
+		</login-module>
+	</authentication>
+</security-domain>
