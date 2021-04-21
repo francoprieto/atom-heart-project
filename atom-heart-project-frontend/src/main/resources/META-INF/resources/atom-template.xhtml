@@ -125,8 +125,8 @@
 		   // <![CDATA[			   
 				document.addEventListener("click", function(event){
 					var elem = event.target;
-					console.log(elem);
-					if((elem instanceof HTMLAnchorElement)||(elem instanceof HTMLButtonElement)){
+					var ident = elem.id;
+					if(ident.endsWith("-as")){
 						var as = PF('atom-as');
 			    		as.trigger('start');
 					}
