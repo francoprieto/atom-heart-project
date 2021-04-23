@@ -111,11 +111,16 @@
 				<ui:insert name="content"></ui:insert>
 			</div>		
 
-			<p:ajaxStatus id="atom-as" widgetVar="atom-as" style="position:fixed;left:50%;top:30%">
+			<p:ajaxStatus id="atom-as" widgetVar="atom-as">
 				<f:facet name="start">
-					<div style="background-color: #FFFFFF; border: 1px solid #333333; text-align: center; padding: 2px">
-						<i class="pi pi-spin pi-spinner" style="font-size: 2rem" />
-					</div>
+				    <div style="position:absolute; left:0px; top:0px; z-index: 99; height: 100%; width: 100%">
+					    <div style="background-color:#CCCCCC ; border : 1px solid #333333; width:100%; height: 100%; text-align:center; padding:2px; opacity: 0.8;" >
+							<br /><br /><br /><br /><br /><br /><br /><br /><br />
+							<div>
+					        	<i class="pi pi-spin pi-spinner" style="font-size: 2rem" />
+					        </div>
+					    </div>
+				    </div>
 				</f:facet>
 				<f:facet name="complete">
 					<h:outputText value="" />
