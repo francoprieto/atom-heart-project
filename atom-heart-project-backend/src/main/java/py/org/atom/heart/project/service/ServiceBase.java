@@ -20,6 +20,13 @@ public class ServiceBase<T> extends BackendBase {
 	@PersistenceContext
 	protected EntityManager em;
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Object getEntityById(Class c, Object id) {
+		Object o = this.em.find(c, id);
+		if(o == null) return null;
+		return o;
+	}
+	
 	public Long count(String query, Map<String,Object> parms){
 		if(query == null || parms == null) return null;
 		Query q = this.em.createQuery(query);
