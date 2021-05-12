@@ -48,8 +48,8 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
 	protected TreeNode root; // For treeCRUD
 	private int pageSize=Constants.DATA_TABLE_DEFAULT_PAGE_SIZE;
 	protected V service; // The class that extends this shall inject the @EJB stateless
-	protected abstract T newInstance();
 	public abstract void init();
+	protected abstract T newInstance();
 	public abstract void searchAction();
 	public abstract void viewAction();
 	public abstract void clearAction();
