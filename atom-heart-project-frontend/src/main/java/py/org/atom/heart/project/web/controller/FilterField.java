@@ -26,6 +26,7 @@ public class FilterField extends DataBase implements Serializable{
 	private String parameter;
 	private boolean required = false;
 	private boolean caseSensitive = false;
+	private boolean param = false;
 	private Integer size;
 	private List<SelectItem> options = new ArrayList<SelectItem>();
 	
@@ -122,4 +123,10 @@ public class FilterField extends DataBase implements Serializable{
 		}
 		this.dateValue = cal.getTime();
 	}
+	public boolean isParam() {
+		return param;
+	}
+	public void setParam(boolean param) {
+		this.param = param;
+	}	
 }
