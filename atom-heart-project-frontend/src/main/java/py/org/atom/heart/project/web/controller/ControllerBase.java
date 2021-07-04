@@ -34,22 +34,22 @@ public abstract class ControllerBase<T,V> extends FrontendBase{
     protected Conversation conversation;
 	protected String screen = Constants.LIST;
 	protected T instance;
-	private List<FilterField> filters = new ArrayList<FilterField>();
-	private List<ListField> listFields = new ArrayList<ListField>();
-	private List<FormField> formFields = new ArrayList<FormField>();
-	private Map<String,List<ViewField>> viewFields = new LinkedHashMap<String,List<ViewField>>();
+	protected List<FilterField> filters = new ArrayList<FilterField>();
+	protected List<ListField> listFields = new ArrayList<ListField>();
+	protected List<FormField> formFields = new ArrayList<FormField>();
+	protected Map<String,List<ViewField>> viewFields = new LinkedHashMap<String,List<ViewField>>();
 	protected LinkedHashMap<String, Boolean> sort = new LinkedHashMap<String,Boolean>(); 
-	private String sortKey;
+	protected String sortKey;
 	protected String user;
 	protected String baseQuery = Constants.BASE_QUERY;
 	protected String baseCount = Constants.BASE_COUNT;
-	private LazyDataModel<T> dataList = null; // For simpleCRUD
+	protected LazyDataModel<T> dataList = null; // For simpleCRUD
 	protected List simpleDataList = null;
 	protected TreeNode root; // For treeCRUD
 	private int pageSize=Constants.DATA_TABLE_DEFAULT_PAGE_SIZE;
 	protected V service; // The class that extends this shall inject the @EJB stateless
-	protected abstract T newInstance();
 	public abstract void init();
+	protected abstract T newInstance();
 	public abstract void searchAction();
 	public abstract void viewAction();
 	public abstract void clearAction();
