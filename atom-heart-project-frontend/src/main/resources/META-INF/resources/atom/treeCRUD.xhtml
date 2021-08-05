@@ -73,7 +73,7 @@
 		   		<h:panelGroup id="listPanel" style="width : 100%">
 		   			<p:treeTable value="#{cc.attrs.treeList}" var="row" id="treeTable" scrollable="true" scrollHeight="400">		   			
 		   				<core:forEach items="#{cc.attrs.treeListFields}" var="c">
-		   					<p:column style="width : #{c.size}%">
+		   					<p:column style="width : #{c.size}%" >
 		   						<f:facet name="header">
 									<h:outputText value="#{c.title}" style="font-size : small;"/>
 								</f:facet>

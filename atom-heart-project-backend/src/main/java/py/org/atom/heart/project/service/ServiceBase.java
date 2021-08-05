@@ -6,11 +6,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 import py.org.atom.heart.project.BackendBase;
 
@@ -19,6 +28,46 @@ public class ServiceBase<T> extends BackendBase {
 	
 	@PersistenceContext
 	protected EntityManager em;
+	
+	@Resource
+	protected UserTransaction userTransaction;	
+	@Resource
+	protected TransactionManager txManager;
+	
+	protected void begin() throws ServiceException {
+		if(this.userTransaction == null) return;
+		if(this.txManager == null) return;
+		try {
+			if (userTransaction.getStatus() == Status.STATUS_NO_TRANSACTION) {
+				System.out.println("========== INICIANDO TRANSACCION ==============");
+				userTransaction.begin();
+			}else
+				System.out.println("========== UNIENDO TRANSACCION ================");
+		} catch (NotSupportedException | SystemException e) {
+			throw new ServiceException(e);
+		}		
+	}
+
+	protected void commit() throws ServiceException {
+		if(this.userTransaction == null) return;
+		try {
+			if (userTransaction.getStatus() == Status.STATUS_NO_TRANSACTION) return;
+			userTransaction.commit();
+		} catch (SecurityException | IllegalStateException | RollbackException | HeuristicMixedException
+				| HeuristicRollbackException | SystemException e) {
+			throw new ServiceException(e);
+		}
+	}
+	
+	protected void rollback() {
+		if(this.userTransaction == null) return;
+		try {
+			if (userTransaction.getStatus() == Status.STATUS_NO_TRANSACTION) return;
+			userTransaction.rollback();
+		} catch (SecurityException | IllegalStateException | SystemException e) {
+			// Swallow exception..
+		}		
+	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getEntityById(Class c, Object id) {
@@ -61,17 +110,22 @@ public class ServiceBase<T> extends BackendBase {
 		List<T> out = q.getResultList();
 		return out;
 	}	
-	
-	public void bulk(String hql, Map<String,Object> params) throws ServiceException{
+	public void bulk(String hql, Map<String,Object> params)  throws ServiceException{
+		this.bulk(hql, params, true); // Autocommit
+	}
+	public void bulk(String hql, Map<String,Object> params, boolean commit) throws ServiceException{
 		if(hql == null || hql.trim().equals("") ) return;
 		try {
+			this.begin();
 			Query q = this.em.createQuery(hql);
 			if(params != null && params.size() > 0) {
 				for(String k : params.keySet()) q.setParameter(k, params.get(k));
 			}
 			q.executeUpdate();
 			this.em.flush();
+			if(commit) this.commit();
 		}catch(Exception ex) {
+			this.rollback();
 			throw new ServiceException(ex);
 		}
 	}
@@ -109,34 +163,54 @@ public class ServiceBase<T> extends BackendBase {
 	}
 	
 	public T update(T o) throws ServiceException{
+		return this.update(o,true); // Autocommit
+	}
+	
+	public T update(T o, boolean commit) throws ServiceException{
 		if(o == null) throw new ServiceException("Empty data");
 		try {
+			this.begin();
 			this.em.merge(o);
 			this.em.flush();
+			if(commit) this.commit();
 			return o;
 		}catch(Exception ex) {
+			this.rollback();
 			throw new ServiceException(ex);
 		}
 	}
 	
 	public T persist(T o) throws ServiceException{
+		return this.persist(o, true);
+	}
+	
+	public T persist(T o, boolean commit) throws ServiceException{
 		if(o == null) throw new ServiceException("Empty data");
 		try {
+			this.begin();
 			this.em.persist(o);
 			this.em.flush();
+			if(commit) this.commit();
 			return o;
 		}catch(Exception ex) {
+			this.rollback();
 			throw new ServiceException(ex);
 		}
 	}	
 	
 	public void remove(T o) throws ServiceException{
+		this.remove(o, true);
+	}
+	public void remove(T o, boolean commit) throws ServiceException{
 		if(o == null) throw new ServiceException("Empty data");
 		try {
+			this.begin();
 			o = this.em.merge(o);
 			this.em.remove(o);
 			this.em.flush();
+			if(commit) this.commit();
 		}catch(Exception ex) {
+			this.rollback();
 			throw new ServiceException(ex);
 		}
 	}
