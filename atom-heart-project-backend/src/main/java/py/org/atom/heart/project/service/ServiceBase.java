@@ -38,11 +38,8 @@ public class ServiceBase<T> extends BackendBase {
 		if(this.userTransaction == null) return;
 		if(this.txManager == null) return;
 		try {
-			if (userTransaction.getStatus() == Status.STATUS_NO_TRANSACTION) {
-				System.out.println("========== INICIANDO TRANSACCION ==============");
+			if (userTransaction.getStatus() == Status.STATUS_NO_TRANSACTION) 
 				userTransaction.begin();
-			}else
-				System.out.println("========== UNIENDO TRANSACCION ================");
 		} catch (NotSupportedException | SystemException e) {
 			throw new ServiceException(e);
 		}		
